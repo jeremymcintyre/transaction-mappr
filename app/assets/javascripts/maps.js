@@ -8,4 +8,28 @@ $(document).ready(function() {
       mapOptions);
   }
   google.maps.event.addDomListener(window, 'load', initialize);
+
+  bindEvents();
 });
+
+
+function bindEvents() {
+  $('nav a').on('click', setMode);
+}
+
+function setMode(event) {
+  event.preventDefault();
+
+  var mode = this.innerHTML.toLowerCase();
+  window.mode = mode;
+  if (mode === "all") {
+    $.ajax({
+      // create route to get all
+      url: '/ROUTE_NEEDED',
+      type: 'GET'
+    }).success(function(resp) {
+      console.log(resp);
+    });
+  }
+}
+
