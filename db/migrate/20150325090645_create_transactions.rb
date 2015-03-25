@@ -3,7 +3,7 @@ class CreateTransactions < ActiveRecord::Migration
     create_table :transactions do |t|
       t.references :user, index: true
       t.string :transaction_type
-      t.decimal :amount, scale: 2
+      t.decimal :amount, precision: 8, scale: 2
 
       t.timestamps null: false
     end
