@@ -25,7 +25,7 @@ function setMode(event) {
   if (mode === "all") {
     $.ajax({
       // create route to get all
-      url: '/ROUTE_NEEDED',
+      url: '/all',
       type: 'GET'
     }).success(function(resp) {
       console.log(resp);
