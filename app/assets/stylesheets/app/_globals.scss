@@ -1,1 +1,11 @@
-html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+html, body, #map-canvas {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#map-canvas {
+  display: inline-block;
+  width: 60%;
+  height: 100%;
+}
