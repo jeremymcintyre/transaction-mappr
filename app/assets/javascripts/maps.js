@@ -96,20 +96,34 @@ var myApp = {
 
 
   AjaxCtrl: (function() {
+
+    var requestEarning = function(date) {
+      console.log("we earning " + date);
+    };
+
+    var requestCharging = function(date) {
+      console.log("we charging " + date);
+    };
+
+    var requestBoth = function(date) {
+      console.log("gotta have both " + date);
+    };
+
     return {
       request: function() {
-        var mode = myApp.mode;
+        var mode = myApp.mode,
+            date = $('#date').html();
 
         if (mode !== "all") {
           myApp.MarkersCtrl.clearMarkers();
         }
 
         if (mode === "earning") {
-          console.log("we earning");
+          requestEarning(date);
         } else if (mode === "charge") {
-          console.log("we charging");
+          requestCharging(date);
         } else if (mode === "both") {
-          console.log("you just gotta have Evverrything");
+          requestBoth(date);
         }
       }
     };
