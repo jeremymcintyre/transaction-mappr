@@ -27,10 +27,12 @@ class UserController < ApplicationController
       date = parse_date(date)
 
       all_users.each do |user|
-        transactions[user.name] =
+        user_transactions =
           user.transactions
               .where("created_at = ? AND transaction_type = ?",
                 date, type)
+
+        transactions[user.name] = user_transactions unless user_transactions.empty?
       end
       transactions
     end
@@ -40,7 +42,8 @@ class UserController < ApplicationController
       date = parse_date(date)
 
       all_users.each do |user|
-        locations[user.name] = user.locations.where("created_at = ?", date)
+        user_locales = user.locations.where("created_at = ?", date)
+        locations[user.name] = user_locales unless user_locales.empty?
       end
       locations
     end

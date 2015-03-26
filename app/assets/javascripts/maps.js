@@ -103,7 +103,34 @@ var myApp = {
         url: '/earning',
         data: {date: date}
       }).success(function(response) {
-        console.log(response);
+        var locations = response.locations,
+            transactions = response.transactions,
+            html = "<ul>";
+        console.log(transactions);
+
+        for (var property in locations) {
+          if (locations.hasOwnProperty(property)) {
+            myApp.MarkersCtrl.setMarkers(locations[property]);
+          }
+        }
+
+        $('#names').html("");
+
+        for (var property in transactions) {
+          if (transactions.hasOwnProperty(property)) {
+            var amounts = [],
+                group = transactions[property];
+
+            group.map(function(trans) {
+              amounts.push("$" + trans.amount);
+            });
+
+            html += "<li>" + property + " " + amounts.join(", ") + "</li>";
+          }
+        }
+        html += "</ul>";
+        $('#names').append(html);
+        // console.log(html);
       });
     };
 
