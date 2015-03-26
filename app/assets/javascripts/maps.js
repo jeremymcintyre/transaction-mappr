@@ -125,7 +125,7 @@ var myApp = {
               amounts.push("$" + trans.amount);
             });
 
-            html += "<li>" + property + " " + amounts.join(", ") + "</li>";
+            html += "<li>" + property + " - " + amounts.join(", ") + "</li>";
           }
         }
         html += "</ul>";
