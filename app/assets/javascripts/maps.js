@@ -130,23 +130,24 @@ var myApp = {
       transactionsResponseHandler(response.transactions);
     };
 
-    var getRequestFactory = function(mode, date) {
+    var getRequestFactory = function(data, url) {
       $.ajax({
         type: 'GET',
-        url: '/results',
-        data: {date: date, mode: mode}
+        url: url,
+        data: data
       }).success(responseHandler);
     };
-
 
     return {
       request: function() {
         var mode = myApp.mode,
             date = $('#date').html();
 
+        myApp.MarkersCtrl.clearMarkers();
         if (mode !== "all") {
-          myApp.MarkersCtrl.clearMarkers();
-          getRequestFactory(mode, date);
+          getRequestFactory({date: date, mode: mode}, '/results');
+        } else if (mode === "all") {
+          getRequestFactory({}, '/all');
         }
       }
     };
@@ -193,17 +194,8 @@ $(document).ready(function() {
 
     var mode = this.innerHTML.toLowerCase();
     myApp.mode = mode;
-    // For initial test of ajax:
     if (mode === "all") {
-      $.ajax({
-        type: 'GET',
-        url: '/all'
-      }).success(function(resp) {
-      // currently limiting data to first user for proof of concept
-      var currentLocations = resp.locations['Art Treaster'];
-      var currentTransactions = resp.transactions['Art Treaster'];
-      myApp.MarkersCtrl.setMarkers(currentLocations);
-    });
+      myApp.AjaxCtrl.request();
     }
   }
 
