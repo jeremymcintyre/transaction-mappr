@@ -10,9 +10,14 @@ ul {
 
 li {
   display: inline-block;
-  margin: 0 30px;
+  margin: 0 5%;
 }
 
 .active {
   color: orange;
+}
+
+p {
+  text-align: center;
+  margin-bottom: -5px;
 }

@@ -13,11 +13,20 @@ a:hover {
   color: orange;
 }
 
-header h2 {
+header {
+  h2, p {
   font-family: 'Merriweather', serif;
-  font-size: 1em;
+  font-size: 0.9em;
+  }
 }
 
 nav {
   font-size: 1.3em;
+  letter-spacing: 3px;
+
+
+  p {
+    font-size: 0.6em;
+    letter-spacing: 5px;
+  }
 }
