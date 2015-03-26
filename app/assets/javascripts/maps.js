@@ -1,4 +1,5 @@
 var myApp = {
+
   MarkersCtrl: (function(){
     var markers = [];
 
@@ -10,7 +11,7 @@ var myApp = {
               position: LatLng,
               animation: google.maps.Animation.DROP,
               map: map
-              // optimized: false,
+              // optimized: false
               // title: userId.toString()
             });
 
@@ -35,15 +36,15 @@ var myApp = {
             marker.setAnimation(google.maps.Animation.BOUNCE);
           }
         });
+        // store in array for easy removal by batch
+        markers.push(marker);
       },
 
       setMarkers: function(locations) {
         for (var i = 0, len = locations.length; i < len; i++) {
           var loc = locations[i],
               position = new google.maps.LatLng(loc.latitude, loc.longitude),
-              marker = this.createMarker(position, loc.user_id);
-          // store in array for easy removal by batch
-          markers.push(marker);
+              marker = this.createMarker(position);
         }
       },
 
@@ -58,6 +59,7 @@ var myApp = {
     };
 
   })(),
+
 
   SliderCtrl: (function() {
     // If there's time, dynamically set slider min/max during initialize
@@ -90,6 +92,27 @@ var myApp = {
         }
       }
     };
+  })(),
+
+
+  AjaxCtrl: (function() {
+    return {
+      request: function() {
+        var mode = myApp.mode;
+
+        if (mode !== "all") {
+          myApp.MarkersCtrl.clearMarkers();
+        }
+
+        if (mode === "earning") {
+          console.log("we earning");
+        } else if (mode === "charge") {
+          console.log("we charging");
+        } else if (mode === "both") {
+          console.log("you just gotta have Evverrything");
+        }
+      }
+    };
   })()
 
 };
@@ -113,14 +136,14 @@ $(document).ready(function() {
 
 
   // Event binding for reuse
-  function bindClickEvents(element, callback) {
-    $(element).on('click', callback);
+  function bindEvents(element, action, callback) {
+    $(element).on(action, callback);
   }
   // setMode is for determining what to request in Ajax calls
-  bindClickEvents('nav a', setMode);
+  bindEvents('nav a', 'click', setMode);
 
-  // initialize slider
-  myApp.SliderCtrl.initialize();
+  bindEvents($('#date').text, 'change', myApp.AjaxCtrl.request);
+
 
   function setMode(event) {
     event.preventDefault();
@@ -140,6 +163,10 @@ $(document).ready(function() {
     });
     }
   }
+
+  // initialize slider
+  myApp.SliderCtrl.initialize();
+
 });
 
 
