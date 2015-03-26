@@ -5,13 +5,39 @@ aside {
   color: black;
   text-align:center;
 
-  li {
-    display: block;
-  }
 }
 
 #date {
   font-size: 3em;
   letter-spacing: 5px;
   margin-top: 30px;
+}
+
+.result {
+  display: block;
+  font-size: 1.2em;
+  width: 80%;
+  margin: 10px auto;
+  box-shadow: 4px 4px 8px #ccc;
+  padding: 10px 10px;
+}
+
+.light {
+  background-color: rgba(0,255,0,0.1);
+}
+
+.medium-light {
+  background-color: rgba(0,255,0,0.2);
+}
+
+.medium {
+  background-color: rgba(0,255,0,0.3);
+}
+
+.medium-dark {
+  background-color: rgba(0,255,0,0.4);
+}
+
+.dark {
+  background-color: rgba(0,255,0,0.5);
 }

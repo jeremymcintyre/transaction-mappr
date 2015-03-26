@@ -106,22 +106,23 @@ var myApp = {
     };
 
     var transactionsResponseHandler = function(transactions) {
-      var html = "<ul>";
+      var html = "";
       $('#results').html(""); // clear the list
 
       for (var property in transactions) {
         if (transactions.hasOwnProperty(property)) {
           var amounts = [],
-              group = transactions[property];
+              group = transactions[property],
+              opacityClass = getOpacityClass(group);
 
           group.map(function(trans) {
             amounts.push("$" + trans.amount);
           });
 
-          html += "<li>" + property + " - " + amounts.join(", ") + "</li>";
+          html += "<div class='result " + opacityClass + "'>" + property + " - " + amounts.join(", ") + "</div>";
         }
       }
-      html += "</ul>";
+      // html += "";
       $('#results').append(html);
     };
 
@@ -136,6 +137,25 @@ var myApp = {
         url: url,
         data: data
       }).success(responseHandler);
+    };
+
+    // the results returned at any time aren't huge, so this is okay
+    var getOpacityClass = function(group) {
+      var total = 0;
+      for (i=0, len = group.length; i<len; i++) {
+        total += parseFloat(group[i].amount);
+      }
+      if (total < 50) {
+        return "light";
+      } else if (total < 100) {
+        return "medium-light";
+      } else if (total < 150) {
+        return "medium";
+      } else if (total < 150) {
+        return "medium-dark";
+      } else if (total >= 150) {
+        return "dark";
+      }
     };
 
     return {
