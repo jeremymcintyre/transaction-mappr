@@ -97,22 +97,25 @@ var myApp = {
 
   AjaxCtrl: (function() {
 
+    var locationResponseHandler = function(locations) {
+      for (var property in locations) {
+        if (locations.hasOwnProperty(property)) {
+          myApp.MarkersCtrl.setMarkers(locations[property]);
+        }
+      }
+    };
+
     var requestEarning = function(date) {
       $.ajax({
         type: 'GET',
         url: '/earning',
         data: {date: date}
       }).success(function(response) {
-        var locations = response.locations,
-            transactions = response.transactions,
-            html = "<ul>";
-        console.log(transactions);
 
-        for (var property in locations) {
-          if (locations.hasOwnProperty(property)) {
-            myApp.MarkersCtrl.setMarkers(locations[property]);
-          }
-        }
+        var transactions = response.transactions,
+            html = "<ul>";
+
+        locationResponseHandler(response.locations);
 
         $('#names').html("");
 
@@ -195,6 +198,8 @@ $(document).ready(function() {
     $('nav a').removeClass("active");
     $(event.target).addClass("active");
   });
+
+
 
   function setMode(event) {
     event.preventDefault();
