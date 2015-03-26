@@ -130,21 +130,14 @@ var myApp = {
       transactionsResponseHandler(response.transactions);
     };
 
-    var requestEarning = function(date) {
+    var getRequestFactory = function(mode, date) {
       $.ajax({
         type: 'GET',
-        url: '/earning',
+        url: '/' + mode,
         data: {date: date}
       }).success(responseHandler);
     };
 
-    var requestCharging = function(date) {
-      console.log("we charging " + date);
-    };
-
-    var requestBoth = function(date) {
-      console.log("gotta have both " + date);
-    };
 
     return {
       request: function() {
@@ -153,14 +146,7 @@ var myApp = {
 
         if (mode !== "all") {
           myApp.MarkersCtrl.clearMarkers();
-        }
-
-        if (mode === "earning") {
-          requestEarning(date);
-        } else if (mode === "charge") {
-          requestCharging(date);
-        } else if (mode === "both") {
-          requestBoth(date);
+          getRequestFactory(mode, date);
         }
       }
     };
