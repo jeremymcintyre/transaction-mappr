@@ -133,8 +133,8 @@ var myApp = {
     var getRequestFactory = function(mode, date) {
       $.ajax({
         type: 'GET',
-        url: '/' + mode,
-        data: {date: date}
+        url: '/results',
+        data: {date: date, mode: mode}
       }).success(responseHandler);
     };
 

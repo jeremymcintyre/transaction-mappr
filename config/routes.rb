@@ -9,8 +9,7 @@ Rails.application.routes.draw do
   #   get 'products/:id' => 'catalog#view'
   get 'all' => 'user#all'
 
-  get 'earning' => 'user#get_earning_transactions_and_locations_on_date', as: :earning
-  get 'charge' => 'user#get_charge_transactions_and_locations_on_date', as: :charge
+  get 'results' => 'user#get_transactions_and_locations_on_date', as: :results
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 

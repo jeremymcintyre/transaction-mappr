@@ -13,16 +13,9 @@ class UserController < ApplicationController
     render :json => {locations: users_locations, transactions: users_transactions}
   end
 
-  def get_earning_transactions_and_locations_on_date
-    date = params[:date]
-    transactions = get_transactions_on_date(date, "earning")
-    locations = get_locations_on_date(date)
-    render :json => {transactions: transactions, locations: locations}
-  end
-
-  def get_charge_transactions_and_locations_on_date
-    date = params[:date]
-    transactions = get_transactions_on_date(date, "charge")
+  def get_transactions_and_locations_on_date
+    date, type = params[:date], params[:mode]
+    transactions = get_transactions_on_date(date, type)
     locations = get_locations_on_date(date)
     render :json => {transactions: transactions, locations: locations}
   end
