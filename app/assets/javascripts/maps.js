@@ -98,7 +98,13 @@ var myApp = {
   AjaxCtrl: (function() {
 
     var requestEarning = function(date) {
-      console.log("we earning " + date);
+      $.ajax({
+        type: 'GET',
+        url: '/earning',
+        data: {date: date}
+      }).success(function(response) {
+        console.log(response);
+      });
     };
 
     var requestCharging = function(date) {
