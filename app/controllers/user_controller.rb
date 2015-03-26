@@ -12,4 +12,41 @@ class UserController < ApplicationController
     end
     render :json => {locations: users_locations, transactions: users_transactions}
   end
+
+  def get_earning_transactions_and_locations_on_date
+    date = params[:date]
+    transactions = get_transactions_on_date(date, "earning")
+    locations = get_locations_on_date(date)
+    render :json => {transactions: transactions, locations: locations}
+  end
+
+  private
+
+    def get_transactions_on_date(date, type)
+      transactions = {}
+      date = parse_date(date)
+
+      all_users.each do |user|
+        transactions[user.name] =
+          user.transactions
+              .where("created_at = ? AND transaction_type = ?",
+                date, type)
+      end
+      transactions
+    end
+
+    def get_locations_on_date(date)
+      locations = {}
+      date = parse_date(date)
+
+      all_users.each do |user|
+        locations[user.name] = user.locations.where("created_at = ?", date)
+      end
+      locations
+    end
+
+    def parse_date(date)
+      Time.parse(date).utc.beginning_of_day
+    end
+
 end
