@@ -207,6 +207,8 @@ $(document).ready(function() {
     $(event.target).addClass("active");
   });
 
+  // set initial mode to "charge" using bound handlers
+  $('nav a:contains("CHARGE")').trigger('click');
 
 
   function setMode(event) {
