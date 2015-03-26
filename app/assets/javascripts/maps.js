@@ -25,9 +25,9 @@ var myApp = {
         // Interesting challenge but it did not pan out.
 
         // As a workaround,
-        // I tried making a markerReferences object that maps user_ids to coordinates
+        // I tried making a markerReferences object that maps user_ids to coordinates.
         // This way, I could still drop a new marker on top of the one corresponding
-        // with the userId.
+        // with the userId. It is not implemented here - too clunky.
         google.maps.event.addListener(marker, 'click', function() {
           if (marker.getAnimation() !== null) {
             marker.setAnimation(null);
@@ -42,7 +42,7 @@ var myApp = {
           var loc = locations[i],
               position = new google.maps.LatLng(loc.latitude, loc.longitude),
               marker = this.createMarker(position, loc.user_id);
-          // store in array for easy removal
+          // store in array for easy removal by batch
           markers.push(marker);
         }
       },
@@ -51,13 +51,46 @@ var myApp = {
         for (i=0; i < markers.length; i++) {
           markers[i].setMap(null);
         }
-        // remove references to markers
+        // removes references to markers
         markers.length = 0;
       }
 
     };
 
   })(),
+
+  SliderCtrl: (function() {
+    // IF HAVE TIME, DYNAMICALLY SET SLIDER LIMITS HERE
+    var initialized = false;
+
+    return {
+      initialize: function() {
+        // don't do this more than once
+        if (!initialized) {
+          initialized = true;
+          var previousValue = parseInt($('#slider').attr('value'));
+
+          $('#slider').on('change', function() {
+            var daysToAdd = parseInt(this.value) - previousValue,
+                date = new Date($('#date').text()),
+                formattedDate;
+
+            // updates
+            previousValue += daysToAdd;
+            date.setDate(date.getDate() + daysToAdd);
+
+            // preformatting
+            month = (date.getMonth() + 1).toString();
+            day = date.getDate().toString();
+
+            formattedDate = date.getFullYear() + '-' + month + '-' + day;
+            $('#date').text(formattedDate);
+
+          });
+        }
+      }
+    };
+  })()
 
 };
 
@@ -86,7 +119,8 @@ $(document).ready(function() {
   // setMode is for determining what to request in Ajax calls
   bindClickEvents('nav a', setMode);
 
-
+  // initialize slider
+  myApp.SliderCtrl.initialize();
 
   function setMode(event) {
     event.preventDefault();
