@@ -25,14 +25,21 @@ class UserController < ApplicationController
     def get_transactions_on_date(date, type)
       transactions = {}
       date = parse_date(date)
+      query = "created_at = ?"
 
-      all_users.each do |user|
-        user_transactions =
-          user.transactions
-              .where("created_at = ? AND transaction_type = ?",
-                date, type)
-
-        transactions[user.name] = user_transactions unless user_transactions.empty?
+      if type == "both"
+        all_users.each do |user|
+          user_transactions =
+            user.transactions.where(query, date)
+          transactions[user.name] = user_transactions unless user_transactions.empty?
+        end
+      else
+        query += " AND transaction_type = ?"
+        all_users.each do |user|
+          user_transactions =
+            user.transactions.where(query, date, type)
+          transactions[user.name] = user_transactions unless user_transactions.empty?
+        end
       end
       transactions
     end
