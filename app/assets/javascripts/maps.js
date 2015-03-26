@@ -60,7 +60,7 @@ var myApp = {
   })(),
 
   SliderCtrl: (function() {
-    // IF HAVE TIME, DYNAMICALLY SET SLIDER LIMITS HERE
+    // If there's time, dynamically set slider min/max during initialize
     var initialized = false;
 
     return {
