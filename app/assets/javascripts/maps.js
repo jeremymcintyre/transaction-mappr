@@ -105,36 +105,37 @@ var myApp = {
       }
     };
 
+    var transactionsResponseHandler = function(transactions) {
+      var html = "<ul>";
+      $('#results').html(""); // clear the list
+
+      for (var property in transactions) {
+        if (transactions.hasOwnProperty(property)) {
+          var amounts = [],
+              group = transactions[property];
+
+          group.map(function(trans) {
+            amounts.push("$" + trans.amount);
+          });
+
+          html += "<li>" + property + " - " + amounts.join(", ") + "</li>";
+        }
+      }
+      html += "</ul>";
+      $('#results').append(html);
+    };
+
+    var responseHandler = function(response) {
+      locationResponseHandler(response.locations);
+      transactionsResponseHandler(response.transactions);
+    };
+
     var requestEarning = function(date) {
       $.ajax({
         type: 'GET',
         url: '/earning',
         data: {date: date}
-      }).success(function(response) {
-
-        var transactions = response.transactions,
-            html = "<ul>";
-
-        locationResponseHandler(response.locations);
-
-        $('#names').html("");
-
-        for (var property in transactions) {
-          if (transactions.hasOwnProperty(property)) {
-            var amounts = [],
-                group = transactions[property];
-
-            group.map(function(trans) {
-              amounts.push("$" + trans.amount);
-            });
-
-            html += "<li>" + property + " - " + amounts.join(", ") + "</li>";
-          }
-        }
-        html += "</ul>";
-        $('#names').append(html);
-        // console.log(html);
-      });
+      }).success(responseHandler);
     };
 
     var requestCharging = function(date) {
