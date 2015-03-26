@@ -20,6 +20,13 @@ class UserController < ApplicationController
     render :json => {transactions: transactions, locations: locations}
   end
 
+  def get_charge_transactions_and_locations_on_date
+    date = params[:date]
+    transactions = get_transactions_on_date(date, "charge")
+    locations = get_locations_on_date(date)
+    render :json => {transactions: transactions, locations: locations}
+  end
+
   private
 
     def get_transactions_on_date(date, type)
