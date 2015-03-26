@@ -6,7 +6,7 @@ The main parts of the interface include a slider bar for changing the date, opti
 
 The user is the common thread between transactions and locations, so I made all AJAX calls to one of two controllers in the User controller, which functions as an API.
 
-Any time a type of transaction is selected ("earning", "charge", or "both"), get requests are made to `/result`. The controller API expects a params object to be sent in the format of this example: `{date: "2015-1-23", mode: "earning"}`. The controller renders a JSON response in the format `{transactions: {}, locations: {}}`, where each value is object mapping names of users to an array of their transactions/locations on the specified date. To keep these JSON objects lighter, the objects only include users who have transactions and/or locations on the given date.
+Any time a type of transaction is selected ("earning", "charge", or "both"), get requests are made to `/results`. The controller API expects a params object to be sent in the format of this example: `{date: "2015-1-23", mode: "earning"}`. The controller renders a JSON response in the format `{transactions: {}, locations: {}}`, where each value is object mapping names of users to an array of their transactions/locations on the specified date. To keep these JSON objects lighter, the objects only include users who have transactions and/or locations on the given date.
 
 The only other route is '/all', which returns a JSON response with the same format, but includes all records.
 
