@@ -191,6 +191,10 @@ $(document).ready(function() {
 
   bindEvents($('#date').text, 'change', myApp.AjaxCtrl.request);
 
+  bindEvents($('nav a'), 'click', function(event) {
+    $('nav a').removeClass("active");
+    $(event.target).addClass("active");
+  });
 
   function setMode(event) {
     event.preventDefault();
