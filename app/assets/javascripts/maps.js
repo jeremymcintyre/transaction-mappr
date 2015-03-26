@@ -4,15 +4,30 @@ var myApp = {
 
     return {
 
-      createMarker: function(LatLng, userId){
+      createMarker: function(LatLng){
         var map = myApp.map,
             marker = new google.maps.Marker({
               position: LatLng,
               animation: google.maps.Animation.DROP,
-              map: map,
-              title: userId
+              map: map
+              // optimized: false,
+              // title: userId.toString()
             });
-        // Animating Listener
+
+        // Animating Listener:
+
+        // My idea was that I could have a list of users and transactions,
+        // and by mouseenter/mouseleaving I could use jQuery .trigger('click')
+        // to dynamically make the corresponding locations bounce on the map.
+        // Unfortunately, it turned out that it is unreasonably difficult to select
+        // google maps markers with jQuery.
+
+        // Interesting challenge but it did not pan out.
+
+        // As a workaround,
+        // I tried making a markerReferences object that maps user_ids to coordinates
+        // This way, I could still drop a new marker on top of the one corresponding
+        // with the userId.
         google.maps.event.addListener(marker, 'click', function() {
           if (marker.getAnimation() !== null) {
             marker.setAnimation(null);
@@ -26,7 +41,7 @@ var myApp = {
         for (var i = 0, len = locations.length; i < len; i++) {
           var loc = locations[i],
               position = new google.maps.LatLng(loc.latitude, loc.longitude),
-              marker = this.createMarker(position, loc.userId);
+              marker = this.createMarker(position, loc.user_id);
           // store in array for easy removal
           markers.push(marker);
         }
@@ -38,7 +53,7 @@ var myApp = {
         }
         // remove references to markers
         markers.length = 0;
-      },
+      }
 
     };
 
@@ -87,7 +102,6 @@ $(document).ready(function() {
       // currently limiting data to first user for proof of concept
       var currentLocations = resp.locations['Art Treaster'];
       var currentTransactions = resp.transactions['Art Treaster'];
-      console.log(currentTransactions);
       myApp.MarkersCtrl.setMarkers(currentLocations);
     });
     }
