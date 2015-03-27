@@ -1,34 +1,20 @@
 var myApp = {
 
   MarkersCtrl: (function(){
-    var markers = [];
+    var markers = {};
 
     return {
 
-      createMarker: function(LatLng){
+      createMarker: function(LatLng, userId){
         var map = myApp.map,
             marker = new google.maps.Marker({
               position: LatLng,
               animation: google.maps.Animation.DROP,
-              map: map
+              map: map,
               // optimized: false
-              // title: userId.toString()
             });
 
         // Animating Listener:
-
-        // My idea was that I could have a list of users and transactions,
-        // and by mouseenter/mouseleaving I could use jQuery .trigger('click')
-        // to dynamically make the corresponding locations bounce on the map.
-        // Unfortunately, it turned out that it is unreasonably difficult to select
-        // google maps markers with jQuery.
-
-        // Interesting challenge but it did not pan out.
-
-        // As a workaround,
-        // I tried making a markerReferences object that maps user_ids to coordinates.
-        // This way, I could still drop a new marker on top of the one corresponding
-        // with the userId. It is not implemented here - too clunky.
         google.maps.event.addListener(marker, 'click', function() {
           if (marker.getAnimation() !== null) {
             marker.setAnimation(null);
@@ -36,24 +22,41 @@ var myApp = {
             marker.setAnimation(google.maps.Animation.BOUNCE);
           }
         });
-        // store in array for easy removal by batch
-        markers.push(marker);
+        // store in object for easy removal by batch
+        if (markers[userId]) {
+          markers[userId].push(marker);
+        } else {
+          markers[userId] = [marker];
+        }
       },
 
       setMarkers: function(locations) {
         for (var i = 0, len = locations.length; i < len; i++) {
           var loc = locations[i],
               position = new google.maps.LatLng(loc.latitude, loc.longitude),
-              marker = this.createMarker(position);
+              marker = this.createMarker(position, loc.user_id);
         }
+        console.log(markers);
+      },
+
+      toggleBounceByUserId: function(userId) {
+        var markersWithId = markers[userId];
+        markersWithId.forEach(function(marker) {
+          google.maps.event.trigger(marker, 'click');
+        });
       },
 
       clearMarkers: function() {
-        for (i=0; i < markers.length; i++) {
-          markers[i].setMap(null);
+        for (var userId in markers) {
+          if (markers.hasOwnProperty(userId)) {
+            var currentSet = markers[userId];
+            for (i=0; i < currentSet.length; i++) {
+              currentSet[i].setMap(null);
+            }
+          }
         }
         // removes references to markers
-        markers.length = 0;
+        markers = {};
       }
 
     };
