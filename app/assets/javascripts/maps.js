@@ -36,14 +36,15 @@ var myApp = {
               position = new google.maps.LatLng(loc.latitude, loc.longitude),
               marker = this.createMarker(position, loc.user_id);
         }
-        console.log(markers);
       },
 
       toggleBounceByUserId: function(userId) {
         var markersWithId = markers[userId];
-        markersWithId.forEach(function(marker) {
-          google.maps.event.trigger(marker, 'click');
-        });
+        if (markersWithId) {
+          markersWithId.forEach(function(marker) {
+            google.maps.event.trigger(marker, 'click');
+          });
+        }
       },
 
       clearMarkers: function() {
@@ -55,7 +56,6 @@ var myApp = {
             }
           }
         }
-        // removes references to markers
         markers = {};
       }
 
@@ -110,23 +110,37 @@ var myApp = {
 
     var transactionsResponseHandler = function(transactions) {
       var html = "";
-      $('#results').html(""); // clear the list
+      var formatCurrency = function(array, group) {
+        group.map(function(transaction) {
+          array.push("$" + transaction.amount);
+        });
+      };
 
+      $('#results').html(""); // clear the list
+      console.log(transactions);
       for (var property in transactions) {
         if (transactions.hasOwnProperty(property)) {
           var amounts = [],
               group = transactions[property],
+              propertyArray = JSON.parse(property),
+              userId = propertyArray[0],
+              userName = propertyArray[1],
               opacityClass = getOpacityClass(group);
 
-          group.map(function(trans) {
-            amounts.push("$" + trans.amount);
-          });
+          formatCurrency(amounts, group);
 
-          html += "<div class='result " + opacityClass + "'>" + property + " - " + amounts.join(", ") + "</div>";
+          html += "<div id=" + userId + " class='result " + opacityClass + "'>" + userName + " - " + amounts.join(", ") + "</div>";
         }
       }
       // html += "";
       $('#results').append(html);
+      // BIND EVENT HANDLERS HERE
+      $('.result').on('mouseenter', function() {
+        myApp.MarkersCtrl.toggleBounceByUserId(this.id);
+      });
+      $('.result').on('mouseleave', function() {
+        myApp.MarkersCtrl.toggleBounceByUserId(this.id);
+      });
     };
 
     var responseHandler = function(response) {
