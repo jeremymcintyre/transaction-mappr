@@ -210,8 +210,9 @@ var myApp = {
 $(document).ready(function() {
   function initialize() {
     var mapOptions = {
-      center: new google.maps.LatLng(37.773972, -122.431297),
-      zoom: 12
+
+      center: new google.maps.LatLng(35.896838, -117.948875),
+      zoom: 5
     };
     // capture 'map' in scope for use in making markers
     myApp.map = new google.maps.Map(document.getElementById('map-canvas'),
