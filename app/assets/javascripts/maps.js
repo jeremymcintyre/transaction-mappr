@@ -38,8 +38,12 @@ var myApp = {
         }
       },
 
+      getMarkers: function(userId) {
+        return (markers[userId]) ? markers[userId] : false;
+      },
+
       toggleBounceByUserId: function(userId) {
-        var markersWithId = markers[userId];
+        var markersWithId = this.getMarkers(userId);
         if (markersWithId) {
           markersWithId.forEach(function(marker) {
             google.maps.event.trigger(marker, 'click');
@@ -136,10 +140,18 @@ var myApp = {
       $('#results').append(html);
       // BIND EVENT HANDLERS HERE
       $('.result').on('mouseenter', function() {
-        myApp.MarkersCtrl.toggleBounceByUserId(this.id);
+        if (myApp.MarkersCtrl.getMarkers(this.id)) {
+          myApp.MarkersCtrl.toggleBounceByUserId(this.id);
+        } else {
+          $('#results').append('<div id="no-loc-notification" class="result">There is no location data for this person on this day</div>');
+        }
       });
       $('.result').on('mouseleave', function() {
-        myApp.MarkersCtrl.toggleBounceByUserId(this.id);
+        if (myApp.MarkersCtrl.getMarkers(this.id)) {
+          myApp.MarkersCtrl.toggleBounceByUserId(this.id);
+        } else {
+          $('#no-loc-notification').remove();
+        }
       });
     };
 
