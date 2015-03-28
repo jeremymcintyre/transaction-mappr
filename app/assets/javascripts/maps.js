@@ -136,14 +136,18 @@ var myApp = {
           html += "<div id=" + userId + " class='result " + opacityClass + "'>" + userName + " - " + amounts.join(", ") + "</div>";
         }
       }
-      // html += "";
-      $('#results').append(html);
+      if (html.length === 0) {
+        $('#results').append('<div id="no-trans-notification" class="result">There is no transaction data of the selected type for this date</div>');
+      } else {
+        $('#no-trans-notification').remove();
+        $('#results').append(html);
+      }
       // BIND EVENT HANDLERS HERE
       $('.result').on('mouseenter', function() {
         if (myApp.MarkersCtrl.getMarkers(this.id)) {
           myApp.MarkersCtrl.toggleBounceByUserId(this.id);
-        } else {
-          $('#results').append('<div id="no-loc-notification" class="result">There is no location data for this person on this day</div>');
+        } else if (this.id !== "no-trans-notification") {
+          $('#results').append('<div id="no-loc-notification" class="result">There is no location data for this person on this date</div>');
         }
       });
       $('.result').on('mouseleave', function() {
