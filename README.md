@@ -2,7 +2,7 @@
 
 This is a [simple app](https://stark-shelf-3141.herokuapp.com/) with a clean interface for looking at correlations in a sample data set. The sample data set contains users, locations of users at certain times (like check-ins), and transactions.
 
-The main parts of the interface include a slider bar for changing the date, options for filtering different types of transactions, and a list of transactions (if there are any on a given day) next to a Google Maps visualization. Mousing over the list of transactions cause corresponding map markers to bounce (sharing the same user id) or else displays a notification if no locations are available for that user on the selected date.
+The main parts of the interface include a slider bar for changing the date, options for filtering different types of transactions, and a list of transactions (if there are any on a given day) next to a Google Maps visualization. Mouseover events on transaction list items cause corresponding user map markers to bounce, or else displays a notification if no locations are available for that user on the selected date.
 
 The user is the common thread between transactions and locations, so I made all AJAX calls to one of two controllers in the User controller, which functions as an API.
 
