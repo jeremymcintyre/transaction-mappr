@@ -7,8 +7,8 @@ class UserController < ApplicationController
     users_locations = {}
     users_transactions = {}
     all_users.each do |user|
-      users_locations[user.name] = user.locations
-      users_transactions[user.name] = user.transactions
+      users_locations[[user.id, user.name]] = user.locations
+      users_transactions[[user.id, user.name]] = user.transactions
     end
     render :json => {locations: users_locations, transactions: users_transactions}
   end
@@ -31,14 +31,14 @@ class UserController < ApplicationController
         all_users.each do |user|
           user_transactions =
             user.transactions.where(query, date)
-          transactions[user.name] = user_transactions unless user_transactions.empty?
+          transactions[[user.id, user.name]] = user_transactions unless user_transactions.empty?
         end
       else
         query += " AND transaction_type = ?"
         all_users.each do |user|
           user_transactions =
             user.transactions.where(query, date, type)
-          transactions[user.name] = user_transactions unless user_transactions.empty?
+          transactions[[user.id, user.name]] = user_transactions unless user_transactions.empty?
         end
       end
       transactions
@@ -50,7 +50,7 @@ class UserController < ApplicationController
 
       all_users.each do |user|
         user_locales = user.locations.where("created_at = ?", date)
-        locations[user.name] = user_locales unless user_locales.empty?
+        locations[[user.id, user.name]] = user_locales unless user_locales.empty?
       end
       locations
     end
