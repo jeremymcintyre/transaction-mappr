@@ -1,0 +1,38 @@
+#header-controls {
+  width: 40%;
+  height: 100%;
+  padding-bottom: 30px;
+  display: inline-block;
+  float: right;
+  margin: 0;
+  background: rgba(255,255,255, 0.04)
+}
+
+#slider {
+  width: 80%;
+  display: block;
+  margin: 0 auto;
+}
+
+nav {
+  width: 100%;
+  margin: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  display: inline-block;
+  margin: 0 5%;
+}
+
+.active {
+  color: orange;
+}
+
+p {
+  text-align: center;
+  margin-bottom: -5px;
+}
