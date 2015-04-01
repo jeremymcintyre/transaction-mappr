@@ -30,9 +30,9 @@
 
 <!-- jsx script for React Component: -->
 
-<script type="text/jsx">
+<script type="text/javascript">
 
-  var SliderControl = React.createClass({
+  var SliderControl = React.createClass({displayName: "SliderControl",
 
     getInitialState:function(){
       return {
@@ -62,28 +62,28 @@
     },
     update:function() {
       this.setState({
-        slider:this.refs.slider.refs.range.getDOMNode().value,
+        slider:this.refs.slider.refs.range.getDOMNode().value
       });
     },
     render:function() {
       return (
-        <div>
-          <Slider ref="slider" update={this.update} />
-          <label id="label">{this.state.slider}</label>
-        </div>
+        React.createElement("div", null,
+          React.createElement(Slider, {ref: "slider", update: this.update}),
+          React.createElement("label", {id: "label"}, this.state.slider)
+        )
       );
     }
   });
 
-  var Slider = React.createClass({
+  var Slider = React.createClass({displayName: "Slider",
     render:function(){
       return (
-          <input id="slider" ref="range" type="range" step="1" min="0" max="60" onChange={this.props.update} />
+          React.createElement("input", {id: "slider", ref: "range", type: "range", step: "1", min: "0", max: "60", onChange: this.props.update})
       );
     }
   })
 
 
-  React.render(<SliderControl />, document.getElementById('slider-wrapper'));
+  React.render(React.createElement(SliderControl, null), document.getElementById('slider-wrapper'));
 
 </script>
