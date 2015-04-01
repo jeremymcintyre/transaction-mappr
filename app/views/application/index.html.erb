@@ -2,7 +2,7 @@
   <div id="header-info">
   <h1>Welcome to <span>Transaction Mappr!</span></h1>
   <h2>This simple app uses a sample data set to show correlation between users' locations and the types of transactions they are making.</h2>
-  <h2><span>Use the slider to adjust the date - click & drag, or click it & use the arrow keys. Place the mouse on transaction list items for additional information!</span></h2>
+  <h2><span>Use the slider to adjust the date. Hover the mouse on transaction list items for additional information!</span></h2>
   </div>
   <div id="header-controls">
     <nav>
@@ -14,17 +14,76 @@
         <li><a href="/">ALL</a></li>
       </ul>
     </nav>
-    <input id="slider" type="range" min="0" max="60" value="0"/>
+    <div id="slider-wrapper"></div>
   </div>
 </header>
 <div id="map-canvas"></div>
 <aside>
-  <div id="date">2015-1-23</div>
+  <div id="date">2015-02-22</div>
   <div id="results"></div>
 </aside>
 
-<script type="text/javascript"
-src="https://maps.googleapis.com/maps/api/js?key=" + ENV['API_KEY']>
-</script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=" + ENV['API_KEY']></script>
 
-<!-- v=3.exp&signed_in=true -->
+
+
+
+<!-- jsx script for React Component: -->
+
+<script type="text/jsx">
+
+  var SliderControl = React.createClass({
+
+    getInitialState:function(){
+      return {
+        slider:30
+      }
+    },
+    componentDidMount:function(){
+      var previousValue = parseInt($('#slider').val());
+      // after React component has a DOM representation, add listener
+      $('#slider').on('change', function() {
+        var daysToAdd = parseInt($(this).val()) - previousValue,
+            date = new Date($('#date').text()),
+            formattedDate;
+
+        // Updates
+        previousValue += daysToAdd;
+        date = new Date(date.setDate(date.getDate() + daysToAdd + 1));
+        // Pre-formatting and padding
+        var month = (date.getMonth() + 1);
+        month = (month < 10) ? ("0" + month) : (month).toString();
+        var day = date.getDate();
+        day = (day < 10) ? ("0" + day) : (day).toString();
+
+        formattedDate = date.getFullYear() + '-' + month + '-' + day;
+        $('#date').text(formattedDate);
+      });
+    },
+    update:function() {
+      this.setState({
+        slider:this.refs.slider.refs.range.getDOMNode().value,
+      });
+    },
+    render:function() {
+      return (
+        <div>
+          <Slider ref="slider" update={this.update} />
+          <label id="label">{this.state.slider}</label>
+        </div>
+      );
+    }
+  });
+
+  var Slider = React.createClass({
+    render:function(){
+      return (
+          <input id="slider" ref="range" type="range" step="1" min="0" max="60" onChange={this.props.update} />
+      );
+    }
+  })
+
+
+  React.render(<SliderControl />, document.getElementById('slider-wrapper'));
+
+</script>

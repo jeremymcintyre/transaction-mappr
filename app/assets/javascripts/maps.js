@@ -68,38 +68,21 @@ var myApp = {
   })(),
 
 
-  SliderCtrl: (function() {
-    // If there's time, dynamically set slider min/max during initialize
-    var initialized = false;
+  // SliderCtrl: (function() {
+  //   // If there's time, dynamically set slider min/max during initialize
+  //   var initialized = false;
 
-    return {
-      initialize: function() {
-        // don't do this more than once
-        if (!initialized) {
-          initialized = true;
-          var previousValue = parseInt($('#slider').attr('value'));
+  //   return {
+  //     initialize: function() {
+  //       // don't do this more than once
+  //       if (!initialized) {
+  //         initialized = true;
 
-          $('#slider').on('change', function() {
-            var daysToAdd = parseInt(this.value) - previousValue,
-                date = new Date($('#date').text()),
-                formattedDate;
 
-            // updates
-            previousValue += daysToAdd;
-            date.setDate(date.getDate() + daysToAdd);
-
-            // preformatting
-            month = (date.getMonth() + 1).toString();
-            day = date.getDate().toString();
-
-            formattedDate = date.getFullYear() + '-' + month + '-' + day;
-            $('#date').text(formattedDate);
-
-          });
-        }
-      }
-    };
-  })(),
+  //       }
+  //     }
+  //   };
+  // })(),
 
 
   AjaxCtrl: (function() {
@@ -256,7 +239,7 @@ $(document).ready(function() {
   }
 
   // initialize slider
-  myApp.SliderCtrl.initialize();
+  // myApp.SliderCtrl.initialize();
 
 });
 

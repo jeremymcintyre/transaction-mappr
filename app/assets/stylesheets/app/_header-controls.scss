@@ -1,7 +1,7 @@
 #header-controls {
   width: 40%;
   height: 100%;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
   display: inline-block;
   float: right;
   margin: 0;
@@ -12,6 +12,12 @@
   width: 80%;
   display: block;
   margin: 0 auto;
+}
+
+label {
+  padding-top: 5px;
+  display: block;
+  text-align: center;
 }
 
 nav {
