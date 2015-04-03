@@ -3,6 +3,14 @@ var myApp = {
   MarkersCtrl: (function(){
     var markers = {};
 
+    function toggleBounce() {
+      if (this.getAnimation() !== null) {
+        this.setAnimation(null);
+      } else {
+        this.setAnimation(google.maps.Animation.BOUNCE);
+      }
+    }
+
     return {
 
       createMarker: function(LatLng, userId){
@@ -15,13 +23,8 @@ var myApp = {
             });
 
         // Animating Listener:
-        google.maps.event.addListener(marker, 'click', function() {
-          if (marker.getAnimation() !== null) {
-            marker.setAnimation(null);
-          } else {
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-          }
-        });
+        google.maps.event.addListener(marker, 'click', toggleBounce);
+
         // store in object for easy removal by batch
         if (markers[userId]) {
           markers[userId].push(marker);

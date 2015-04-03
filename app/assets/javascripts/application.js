@@ -12,6 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require maps
+//= require myapp
 //= require components/react-slider
 //= require_tree .
