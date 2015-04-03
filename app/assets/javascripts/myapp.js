@@ -49,7 +49,7 @@ Initial configuration takes care of the following on document ready:
       mode. In this case, the 'mode' refers to the type of transaction
       filter currently being used.
 
-  * Uses the event handlers to set the initial mode to 'Earning', so the
+  * Uses the event handlers to set the initial mode to 'charge', so the
       user does not have to select one in order to begin using the app.
 
 
@@ -169,7 +169,12 @@ var myApp = {
         }
       }
       if (html.length === 0) {
-        $('#results').append('<div id="no-trans-notification" class="result">There is no transaction data of the selected type for this date</div>');
+        $('#results')
+          .append(
+            '<div id="no-trans-notification" class="result">' +
+              'There is no transaction data of the selected type for this date' +
+            '</div>'
+          );
       } else {
         $('#no-trans-notification').remove();
         $('#results').append(html);
@@ -179,7 +184,12 @@ var myApp = {
         if (myApp.MarkersCtrl.getMarkers(this.id)) {
           myApp.MarkersCtrl.toggleBounceByUserId(this.id);
         } else if (this.id !== "no-trans-notification") {
-          $('#results').append('<div id="no-loc-notification" class="result">There is no location data for this person on this date</div>');
+          $('#results')
+            .append(
+              '<div id="no-loc-notification" class="result">' +
+                'There is no location data for this person on this date' +
+              '</div>'
+            );
         }
       });
       $('.result').on('mouseleave', function() {
