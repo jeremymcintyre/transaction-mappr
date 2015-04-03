@@ -11,6 +11,14 @@ var myApp = {
       }
     }
 
+    function storeMarkerById(userId, marker) {
+      if (markers[userId]) {
+        markers[userId].push(marker);
+      } else {
+        markers[userId] = [marker];
+      }
+    }
+
     return {
 
       createMarker: function(LatLng, userId){
@@ -18,19 +26,14 @@ var myApp = {
             marker = new google.maps.Marker({
               position: LatLng,
               animation: google.maps.Animation.DROP,
-              map: map,
-              // optimized: false
+              map: map
             });
 
         // Animating Listener:
         google.maps.event.addListener(marker, 'click', toggleBounce);
 
-        // store in object for easy removal by batch
-        if (markers[userId]) {
-          markers[userId].push(marker);
-        } else {
-          markers[userId] = [marker];
-        }
+        // store in markers object for easy removal by batch
+        storeMarkerById(userId, marker);
       },
 
       setMarkers: function(locations) {
