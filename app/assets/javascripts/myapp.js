@@ -1,59 +1,61 @@
-/*
-
-This file contains 2 main parts:
-1. myApp object with functions & behaviors organized into controllers
-2. Initial configuration to happen on document ready
-
-These sections are further explained below.
-
------------------------------------------------------------------------
-ONE.
-
-The myApp object has 2 main controllers:
-
-   * MarkersCtrl
-       - Controls the creation, setting, getting, clearing,
-       event binding, and animations of google maps markers
-
-   * AjaxCtrl
-       - Handles all requests to the backend API and all responses,
-       including transforming the responses into formatted DOM elements
-       - There is only one returned method, request()
-
-Both controllers are properties of the myApp object, and expressed as
-Immediately-Invoking Function Expressions (IIFEs). This allows "private"
-functions to be declared inside of them that are not returned, and so are
-inaccessible from outside. For example, myApp.AjaxCtrl.request() is the
-only returned function from AjaxCtrl that can be accessed elsewhere. This
-encapsulates and shields behavior specific to the controller that is not
-necessary to share.
-
-
-****** NOTE: Behavior for the slider component is located in:
-****** app/assets/javascripts/components/react-slider.js
-
-
-
------------------------------------------------------------------------
-TWO.
-
-Initial configuration takes care of the following on document ready:
-
-  * Initializes the map with proper coordinates and zoom.
-
-  * Stores a reference to the map in the myApp object.
-
-  * Binds event handlers to the nav and date container.
-
-  * Defines the setMode() function, which event handlers use to set the
-      mode. In this case, the 'mode' refers to the type of transaction
-      filter currently being used.
-
-  * Uses the event handlers to set the initial mode to 'charge', so the
-      user does not have to select one in order to begin using the app.
-
-
------------------------------------------------------------------------
+/**
+*
+* This file contains 2 main parts:
+* 1. myApp object with functions & behaviors organized into controllers
+* 2. Initial configuration to happen on document ready
+*
+* These sections are further explained below.
+*
+* -----------------------------------------------------------------------
+* ONE.
+*
+* The myApp object has 2 main controllers:
+*
+*   * MarkersCtrl
+*     • Controls the creation, setting, getting, clearing,
+*        event binding, and animations of google maps markers
+*
+*   * AjaxCtrl
+*     • Handles all requests to the backend API and all responses,
+*        including transforming the responses into formatted DOM elements
+*     • There is only one returned method, request()
+*
+*
+*
+*  Both controllers are properties of the myApp object, and expressed as
+*  Immediately-Invoking Function Expressions (IIFEs). This allows "private"
+*  functions to be declared inside of them that are not returned, and so are
+*  inaccessible from outside. For example, myApp.AjaxCtrl.request() is the
+*  only returned function from AjaxCtrl that can be accessed elsewhere. This
+*  encapsulates and shields behavior specific to the controller that is not
+*  necessary to share.
+*
+*
+*  ****** NOTE: Behavior for the slider component is located in:
+*        app/assets/javascripts/components/react-slider.js
+*
+*
+*
+* -----------------------------------------------------------------------
+* TWO.
+*
+* Initial configuration takes care of the following on document ready:
+*
+*   * Initializes the map with proper coordinates and zoom.
+*
+*   * Stores a reference to the map in the myApp object.
+*
+*   * Binds event handlers to the nav and date container.
+*
+*   * Defines the setMode() function, which event handlers use to set the
+*       mode. In this case, the 'mode' refers to the type of transaction
+*       filter currently being used.
+*
+*   * Uses the event handlers to set the initial mode to 'charge', so the
+*       user does not have to select one in order to begin using the app.
+*
+*
+* -----------------------------------------------------------------------
 */
 
 
@@ -165,7 +167,9 @@ var myApp = {
 
           formatCurrency(amounts, group);
 
-          html += "<div id=" + userId + " class='result " + opacityClass + "'>" + userName + " - " + amounts.join(", ") + "</div>";
+          html += "<div id=" + userId + " class='result " + opacityClass + "'>" +
+                    userName + " - " + amounts.join(", ") +
+                  "</div>";
         }
       }
       if (html.length === 0) {
