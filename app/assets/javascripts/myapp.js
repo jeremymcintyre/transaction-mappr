@@ -68,22 +68,6 @@ var myApp = {
   })(),
 
 
-  // SliderCtrl: (function() {
-  //   // If there's time, dynamically set slider min/max during initialize
-  //   var initialized = false;
-
-  //   return {
-  //     initialize: function() {
-  //       // don't do this more than once
-  //       if (!initialized) {
-  //         initialized = true;
-
-
-  //       }
-  //     }
-  //   };
-  // })(),
-
 
   AjaxCtrl: (function() {
 
@@ -104,7 +88,7 @@ var myApp = {
       };
 
       $('#results').html(""); // clear the list
-      console.log(transactions);
+
       for (var property in transactions) {
         if (transactions.hasOwnProperty(property)) {
           var amounts = [],
@@ -237,9 +221,6 @@ $(document).ready(function() {
       myApp.AjaxCtrl.request();
     }
   }
-
-  // initialize slider
-  // myApp.SliderCtrl.initialize();
 
 });
 
