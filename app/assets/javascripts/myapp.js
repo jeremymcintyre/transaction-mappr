@@ -112,9 +112,9 @@ var myApp = {
       toggleBounceByUserId: function(userId) {
         var markersWithId = this.getMarkers(userId);
         if (markersWithId) {
-          markersWithId.forEach(function(marker) {
-            google.maps.event.trigger(marker, 'click');
-          });
+          for (var i=0, len = markersWithId.length; i < len; i++) {
+            toggleBounce.call(markersWithId[i]);
+          }
         }
       },
 
@@ -122,7 +122,7 @@ var myApp = {
         for (var userId in markers) {
           if (markers.hasOwnProperty(userId)) {
             var currentSet = markers[userId];
-            for (i=0; i < currentSet.length; i++) {
+            for (var i=0; i < currentSet.length; i++) {
               currentSet[i].setMap(null);
             }
           }
