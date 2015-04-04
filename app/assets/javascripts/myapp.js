@@ -73,11 +73,9 @@ var myApp = {
     }
 
     function storeMarkerById(userId, marker) {
-      if (markers[userId]) {
-        markers[userId].push(marker);
-      } else {
-        markers[userId] = [marker];
-      }
+      markers[userId] ?
+      markers[userId].push(marker) :
+      markers[userId] = [marker]
     }
 
     return {
@@ -89,10 +87,8 @@ var myApp = {
               animation: google.maps.Animation.DROP,
               map: map
             });
-
         // Animating Listener:
         google.maps.event.addListener(marker, 'click', toggleBounce);
-
         // store in markers object for easy removal by batch
         storeMarkerById(userId, marker);
       },
@@ -106,7 +102,11 @@ var myApp = {
       },
 
       getMarkers: function(userId) {
-        return (markers[userId]) ? markers[userId] : false;
+        return (
+          markers[userId] ?
+          markers[userId] :
+          false
+        );
       },
 
       toggleBounceByUserId: function(userId) {
@@ -121,8 +121,9 @@ var myApp = {
       clearMarkers: function() {
         for (var userId in markers) {
           if (markers.hasOwnProperty(userId)) {
-            var currentSet = markers[userId];
-            for (var i=0; i < currentSet.length; i++) {
+            var currentSet = markers[userId],
+                len = currentSet.length;
+            for (var i=0; i < len; i++) {
               currentSet[i].setMap(null);
             }
           }
@@ -138,38 +139,39 @@ var myApp = {
 
   AjaxCtrl: (function() {
 
-    var locationResponseHandler = function(locations) {
+    function locationResponseHandler(locations) {
       for (var property in locations) {
         if (locations.hasOwnProperty(property)) {
           myApp.MarkersCtrl.setMarkers(locations[property]);
         }
       }
-    };
+    }
 
-    var transactionsResponseHandler = function(transactions) {
+    function transactionsResponseHandler(transactions) {
       var html = "";
-      var formatCurrency = function(array, group) {
-        group.map(function(transaction) {
-          array.push("$" + transaction.amount);
-        });
-      };
+      function formatCurrency(transactions) {
+        return (transactions.map(
+          function(transaction) {
+            return "$" + transaction.amount;
+        }));
+      }
+      // clear the list
+      $('#results').html("");
 
-      $('#results').html(""); // clear the list
+      for (var userInfo in transactions) {
+        if (transactions.hasOwnProperty(userInfo)) {
+          var usersTransactions = transactions[userInfo],
+              amounts = formatCurrency(usersTransactions),
+              userInfoArray = JSON.parse(userInfo),
+              userId = userInfoArray[0],
+              userName = userInfoArray[1],
+              opacityClass = getOpacityClass(usersTransactions);
 
-      for (var property in transactions) {
-        if (transactions.hasOwnProperty(property)) {
-          var amounts = [],
-              group = transactions[property],
-              propertyArray = JSON.parse(property),
-              userId = propertyArray[0],
-              userName = propertyArray[1],
-              opacityClass = getOpacityClass(group);
-
-          formatCurrency(amounts, group);
-
-          html += "<div id=" + userId + " class='result " + opacityClass + "'>" +
-                    userName + " - " + amounts.join(", ") +
-                  "</div>";
+          html += (
+            "<div id=" + userId + " class='result " + opacityClass + "'>" +
+              userName + " - " + amounts.join(", ") +
+            "</div>"
+          );
         }
       }
       if (html.length === 0) {
@@ -221,7 +223,7 @@ var myApp = {
     // the results returned at any time aren't huge, so this is okay
     var getOpacityClass = function(group) {
       var total = 0;
-      for (i=0, len = group.length; i<len; i++) {
+      for (var i=0, len = group.length; i<len; i++) {
         total += parseFloat(group[i].amount);
       }
       if (total < 50) {
