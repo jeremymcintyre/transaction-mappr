@@ -14,7 +14,7 @@ class UserController < ApplicationController
   end
 
   def get_transactions_and_locations_on_date
-    date, type = params[:date], params[:mode]
+    date, type = params[:date], params[:filter]
     transactions = get_transactions_on_date(date, type)
     locations = get_locations_on_date(date)
     render :json => {transactions: transactions, locations: locations}

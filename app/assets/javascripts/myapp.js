@@ -47,11 +47,10 @@
 *
 *   * Binds event handlers to the nav and date container.
 *
-*   * Defines the setMode() function, which event handlers use to set the
-*       mode. In this case, the 'mode' refers to the type of transaction
-*       filter currently being used.
+*   * Defines the setFilter() function, which event handlers use to set the
+*       transaction type filter.
 *
-*   * Uses the event handlers to set the initial mode to 'charge', so the
+*   * Uses the event handlers to set the initial filter to 'charge', so the
 *       user does not have to select one in order to begin using the app.
 *
 *
@@ -241,13 +240,13 @@ var myApp = {
 
     return {
       request: function() {
-        var mode = myApp.mode,
+        var filter = myApp.filter,
             date = $('#date').html();
 
         myApp.MarkersCtrl.clearMarkers();
-        if (mode !== "all") {
-          getRequestFactory({date: date, mode: mode}, '/results');
-        } else if (mode === "all") {
+        if (filter !== "all") {
+          getRequestFactory({date: date, filter: filter}, '/results');
+        } else if (filter === "all") {
           getRequestFactory({}, '/all');
         }
       }
@@ -279,8 +278,8 @@ $(document).ready(function() {
   function bindEvents(element, action, callback) {
     $(element).on(action, callback);
   }
-  // setMode is for determining what to request in Ajax calls
-  bindEvents('nav a', 'click', setMode);
+  // setFilter is for determining what to request in Ajax calls
+  bindEvents('nav a', 'click', setFilter);
 
   bindEvents($('#date').text, 'change', myApp.AjaxCtrl.request);
 
@@ -289,16 +288,16 @@ $(document).ready(function() {
     $(event.target).addClass("active");
   });
 
-  // set initial mode to "charge" using bound handlers
+  // set initial filter to "charge" using bound handlers
   $('nav a:contains("CHARGE")').trigger('click');
 
 
-  function setMode(event) {
+  function setFilter(event) {
     event.preventDefault();
 
-    var mode = this.innerHTML.toLowerCase();
-    myApp.mode = mode;
-    if (mode === "all") {
+    var filter = this.innerHTML.toLowerCase();
+    myApp.filter = filter;
+    if (filter === "all") {
       myApp.AjaxCtrl.request();
     }
   }
