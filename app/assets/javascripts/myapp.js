@@ -64,11 +64,9 @@ var myApp = {
     var markers = {};
 
     function toggleBounce() {
-      if (this.getAnimation() !== null) {
-        this.setAnimation(null);
-      } else {
-        this.setAnimation(google.maps.Animation.BOUNCE);
-      }
+      this.getAnimation() !== null ?
+      this.setAnimation(null) :
+      this.setAnimation(google.maps.Animation.BOUNCE);
     }
 
     function storeMarkerById(userId, marker) {
@@ -80,8 +78,8 @@ var myApp = {
     return {
 
       createMarker: function(LatLng, userId){
-        var map = myApp.map,
-            marker = new google.maps.Marker({
+        var map = myApp.map;
+        var marker = new google.maps.Marker({
               position: LatLng,
               animation: google.maps.Animation.DROP,
               map: map
