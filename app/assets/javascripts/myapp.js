@@ -293,8 +293,12 @@ $(document).ready(function() {
 
   function setFilter(event) {
     event.preventDefault();
+    // From UX perspective,
+    // makes sense to clear current markers when changing filter
+    myApp.MarkersCtrl.clearMarkers();
 
     var filter = this.innerHTML.toLowerCase();
+
     myApp.filter = filter;
     if (filter === "all") {
       myApp.AjaxCtrl.request();
