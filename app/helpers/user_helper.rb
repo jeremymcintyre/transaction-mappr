@@ -17,19 +17,12 @@ module UserHelper
   def get_transactions_on_date(date, filter)
     transactions = {}
     date = parse_date(date)
-    query = "created_at = ?"
+    query = build_query(filter)
+    filter_arg = filter unless filter == "both"
 
-    if filter == "both"
-      all_users.each do |user|
-        user_transactions = user.transactions.where(query, date)
-        transactions[[user.id, user.name]] = user_transactions unless user_transactions.empty?
-      end
-    else
-      query += " AND transaction_type = ?"
-      all_users.each do |user|
-        user_transactions = user.transactions.where(query, date, filter)
-        transactions[[user.id, user.name]] = user_transactions unless user_transactions.empty?
-      end
+    all_users.each do |user|
+      user_transactions = user.transactions.where(query, date, *filter_arg)
+      transactions[[user.id, user.name]] = user_transactions unless user_transactions.empty?
     end
     transactions
   end
@@ -43,6 +36,11 @@ module UserHelper
       locations[[user.id, user.name]] = user_locales unless user_locales.empty?
     end
     locations
+  end
+
+  def build_query(filter)
+    query = "created_at = ?"
+    filter == "both" ? query : query + " AND transaction_type = ?"
   end
 
   def parse_date(date)
