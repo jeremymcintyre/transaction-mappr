@@ -98,7 +98,7 @@ var myApp = {
         }
       },
 
-      getMarkers: function(userId) {
+      getMarkersByUserId: function(userId) {
         return (
           markers[userId] ?
           markers[userId] :
@@ -107,7 +107,7 @@ var myApp = {
       },
 
       toggleBounceByUserId: function(userId) {
-        var markersWithId = this.getMarkers(userId);
+        var markersWithId = this.getMarkersByUserId(userId);
         if (markersWithId) {
           for (var i=0, len = markersWithId.length; i < len; i++) {
             toggleBounce.call(markersWithId[i]);
@@ -183,10 +183,14 @@ var myApp = {
         $('#results').append(html);
       }
       // BIND EVENT HANDLERS HERE
-      $('.result').on('mouseenter', function() {
-        if (myApp.MarkersCtrl.getMarkers(this.id)) {
+      $('.result').click(function() {
+        if (myApp.MarkersCtrl.getMarkersByUserId(this.id))
           myApp.MarkersCtrl.toggleBounceByUserId(this.id);
-        } else if (this.id !== "no-trans-notification") {
+      });
+
+      $('.result').on('mouseenter', function() {
+        if (!(myApp.MarkersCtrl.getMarkersByUserId(this.id)) &&
+          this.id !== "no-trans-notification") {
           $('#results')
             .append(
               '<div id="no-loc-notification" class="result">' +
@@ -195,14 +199,11 @@ var myApp = {
             );
         }
       });
+
       $('.result').on('mouseleave', function() {
-        if (myApp.MarkersCtrl.getMarkers(this.id)) {
-          myApp.MarkersCtrl.toggleBounceByUserId(this.id);
-        } else {
-          $('#no-loc-notification').remove();
-        }
+        $('#no-loc-notification').remove();
       });
-    };
+    }
 
     var responseHandler = function(response) {
       locationResponseHandler(response.locations);
