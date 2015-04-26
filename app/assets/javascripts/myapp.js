@@ -60,23 +60,10 @@
 
 var myApp = {
 
-  MarkersCtrl: (function(){
-    var markers = {};
+  View: function(model) {
+    var model = model;
 
-    function toggleBounce() {
-      this.getAnimation() !== null ?
-      this.setAnimation(null) :
-      this.setAnimation(google.maps.Animation.BOUNCE);
-    }
-
-    function storeMarkerById(userId, marker) {
-      markers[userId] ?
-      markers[userId].push(marker) :
-      markers[userId] = [marker]
-    }
-
-    return {
-
+    return ({
       createMarker: function(LatLng, userId){
         var map = myApp.map;
         var marker = new google.maps.Marker({
@@ -87,7 +74,7 @@ var myApp = {
         // Animating Listener:
         google.maps.event.addListener(marker, 'click', toggleBounce);
         // store in markers object for easy removal by batch
-        storeMarkerById(userId, marker);
+        model.storeMarkerById(userId, marker);
       },
 
       setMarkers: function(locations) {
@@ -98,24 +85,9 @@ var myApp = {
         }
       },
 
-      getMarkersByUserId: function(userId) {
-        return (
-          markers[userId] ?
-          markers[userId] :
-          false
-        );
-      },
-
-      toggleBounceByUserId: function(userId) {
-        var markersWithId = this.getMarkersByUserId(userId);
-        if (markersWithId) {
-          for (var i=0, len = markersWithId.length; i < len; i++) {
-            toggleBounce.call(markersWithId[i]);
-          }
-        }
-      },
-
       clearMarkers: function() {
+        var markers = model.getMarkers;
+
         for (var userId in markers) {
           if (markers.hasOwnProperty(userId)) {
             var currentSet = markers[userId],
@@ -125,14 +97,59 @@ var myApp = {
             }
           }
         }
-        markers = {};
+      },
+
+      toggleBounce: function() {
+        this.getAnimation() !== null ?
+        this.setAnimation(null) :
+        this.setAnimation(google.maps.Animation.BOUNCE);
       }
 
-    };
+    })
+  },
 
-  })(),
+  MarkersModel: function() {
+    var markers = {};
 
+    return {
 
+      getMarkers: function() { return markers },
+
+      getMarkersByUserId: function(userId) {
+        return (
+          markers[userId] ?
+          markers[userId] :
+          false
+        );
+      },
+
+      storeMarkerById: function(userId, marker) {
+        markers[userId] ?
+        markers[userId].push(marker) :
+        markers[userId] = [marker]
+      },
+
+      clearMarkerData: function() { markers = {}; }
+    }
+  },
+
+  MarkersCtrl: function(model, view) {
+
+    return {
+
+      toggleBounceByUserId: function(userId) {
+        var markersWithId = model.getMarkersByUserId(userId);
+        if (markersWithId) {
+          for (var i=0, len = markersWithId.length; i < len; i++) {
+            view.toggleBounce.call(markersWithId[i]);
+          }
+        }
+      }
+
+    }
+  },
+
+//////////////////////////////////////
 
   AjaxCtrl: (function() {
 
