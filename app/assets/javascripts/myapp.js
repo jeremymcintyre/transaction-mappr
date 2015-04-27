@@ -33,29 +33,26 @@ var myApp = {
 
   },
 
-
-
   View: function(model) {
 
+    function _createMarker(LatLng, userId){
+      var map = myApp.map;
+      var marker = new google.maps.Marker({
+            position: LatLng,
+            animation: google.maps.Animation.DROP,
+            map: map
+          });
+      // store in markers object for easy removal by batch
+      model.storeMarkerById(userId, marker);
+    }
+
     return ({
-      createMarker: function(LatLng, userId){
-        var map = myApp.map;
-        var marker = new google.maps.Marker({
-              position: LatLng,
-              animation: google.maps.Animation.DROP,
-              map: map
-            });
-        // Animating Listener:
-        google.maps.event.addListener(marker, 'click', this.toggleBounce);
-        // store in markers object for easy removal by batch
-        model.storeMarkerById(userId, marker);
-      },
 
       setMarkers: function(locations) {
         for (var i = 0, len = locations.length; i < len; i++) {
           var loc = locations[i],
               position = new google.maps.LatLng(loc.latitude, loc.longitude),
-              marker = this.createMarker(position, loc.user_id);
+              marker = _createMarker(position, loc.user_id);
         }
       },
 
@@ -77,11 +74,47 @@ var myApp = {
         this.getAnimation() !== null ?
         this.setAnimation(null) :
         this.setAnimation(google.maps.Animation.BOUNCE);
+      },
+
+      informNoTransactionData: function() {
+        $('#results')
+          .append(
+            '<div id="no-trans-notification" class="result">' +
+              'There is no transaction data of the selected type for this date' +
+            '</div>'
+          );
+      },
+
+      informNoLocationData: function() {
+        $('#results')
+            .append(
+              '<div id="no-loc-notification" class="result">' +
+                'There is no location data for this person on this date' +
+              '</div>'
+            );
+      },
+
+      formatCurrency: function(transactions) {
+        return (transactions.map(
+          function(transaction) {
+            return "$" + transaction.amount;
+        }));
+      },
+
+      clearList: function() {
+        $('#results').html("");
+      },
+
+      newTransactionListItem: function(userId, opacityClass, userName, amounts) {
+        return (
+          "<div id=" + userId + " class='result " + opacityClass + "'>" +
+            userName + " - " + amounts.join(", ") +
+          "</div>"
+        );
       }
 
     });
   },
-
 
 
   Controller: function(model, view) {
@@ -103,53 +136,30 @@ var myApp = {
       }
     }
 
-    function _informNoTransactionData() {
-      $('#results')
-          .append(
-            '<div id="no-trans-notification" class="result">' +
-              'There is no transaction data of the selected type for this date' +
-            '</div>'
-          );
-    }
-
-    function _informNoLocationData() {
-      $('#results')
-            .append(
-              '<div id="no-loc-notification" class="result">' +
-                'There is no location data for this person on this date' +
-              '</div>'
-            );
-    }
-
     function _transactionsResponseHandler(transactions) {
       var html = "";
-      function formatCurrency(transactions) {
-        return (transactions.map(
-          function(transaction) {
-            return "$" + transaction.amount;
-        }));
-      }
-      // clear the list
-      $('#results').html("");
+
+      view.clearList();
 
       for (var userInfo in transactions) {
         if (transactions.hasOwnProperty(userInfo)) {
           var usersTransactions = transactions[userInfo],
-              amounts = formatCurrency(usersTransactions),
+              amounts = view.formatCurrency(usersTransactions),
               userInfoArray = JSON.parse(userInfo),
               userId = userInfoArray[0],
               userName = userInfoArray[1],
               opacityClass = _getOpacityClass(usersTransactions);
 
-          html += (
-            "<div id=" + userId + " class='result " + opacityClass + "'>" +
-              userName + " - " + amounts.join(", ") +
-            "</div>"
-          );
+          html += view.newTransactionListItem(
+            userId,
+            opacityClass,
+            userName,
+            amounts);
         }
       }
+
       if (html.length === 0) {
-        _informNoTransactionData();
+        view.informNoTransactionData();
       } else {
         $('#no-trans-notification').remove();
         $('#results').append(html);
@@ -163,7 +173,7 @@ var myApp = {
       $('.result').on('mouseenter', function() {
         if (!(model.getMarkersByUserId(this.id)) &&
           (this.id !== "no-trans-notification"))
-          _informNoLocationData();
+          view.informNoLocationData();
       });
 
       $('.result').on('mouseleave', function() {
@@ -222,7 +232,6 @@ var myApp = {
 
       setFilter: function(event) {
         event.preventDefault();
-
         // From UX perspective,
         // makes sense to clear current markers when changing filter
         view.clearMarkers();
