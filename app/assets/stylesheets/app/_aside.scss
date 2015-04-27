@@ -13,6 +13,14 @@ aside {
   margin-top: 30px;
 }
 
+%shadow {
+  box-shadow: 0 7px 10px #aaa;
+}
+
+#no-trans-notification {
+  @extend %shadow;
+}
+
 #no-loc-notification {
   background: rgba(255,165,0,0.3);
 }
@@ -22,9 +30,15 @@ aside {
   font-size: 1.2em;
   width: 80%;
   margin: 10px auto;
-  box-shadow: 4px 4px 8px #ccc;
   padding: 10px 10px;
+  transition-property: box-shadow;
+  transition-duration: 0.3s;
 }
+  .result:hover {
+    @extend %shadow;
+    transition-property: box-shadow;
+    transition-duration: 0.3s;
+  }
 
 .light {
   background-color: rgba(0,255,0,0.1);
