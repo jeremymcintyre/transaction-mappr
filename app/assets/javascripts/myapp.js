@@ -103,6 +103,24 @@ var myApp = {
       }
     }
 
+    function _informNoTransactionData() {
+      $('#results')
+          .append(
+            '<div id="no-trans-notification" class="result">' +
+              'There is no transaction data of the selected type for this date' +
+            '</div>'
+          );
+    }
+
+    function _informNoLocationData() {
+      $('#results')
+            .append(
+              '<div id="no-loc-notification" class="result">' +
+                'There is no location data for this person on this date' +
+              '</div>'
+            );
+    }
+
     function _transactionsResponseHandler(transactions) {
       var html = "";
       function formatCurrency(transactions) {
@@ -131,12 +149,7 @@ var myApp = {
         }
       }
       if (html.length === 0) {
-        $('#results')
-          .append(
-            '<div id="no-trans-notification" class="result">' +
-              'There is no transaction data of the selected type for this date' +
-            '</div>'
-          );
+        _informNoTransactionData();
       } else {
         $('#no-trans-notification').remove();
         $('#results').append(html);
@@ -149,14 +162,8 @@ var myApp = {
 
       $('.result').on('mouseenter', function() {
         if (!(model.getMarkersByUserId(this.id)) &&
-          this.id !== "no-trans-notification") {
-          $('#results')
-            .append(
-              '<div id="no-loc-notification" class="result">' +
-                'There is no location data for this person on this date' +
-              '</div>'
-            );
-        }
+          (this.id !== "no-trans-notification"))
+          _informNoLocationData();
       });
 
       $('.result').on('mouseleave', function() {
