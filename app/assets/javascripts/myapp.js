@@ -60,8 +60,37 @@
 
 var myApp = {
 
+  Model: function() {
+    var markers = {};
+
+
+    return ({
+
+      getMarkers: function() {return markers; },
+
+      getMarkersByUserId: function(userId) {
+        return (
+          markers[userId] ?
+          markers[userId] :
+          false
+        );
+      },
+
+      storeMarkerById: function(userId, marker) {
+        markers[userId] ?
+        markers[userId].push(marker) :
+        markers[userId] = [marker]
+      },
+
+      clearMarkerData: function() { markers = {}; }
+
+    });
+
+  },
+
+
+
   View: function(model) {
-    var model = model;
 
     return ({
       createMarker: function(LatLng, userId){
@@ -72,7 +101,7 @@ var myApp = {
               map: map
             });
         // Animating Listener:
-        google.maps.event.addListener(marker, 'click', toggleBounce);
+        google.maps.event.addListener(marker, 'click', this.toggleBounce);
         // store in markers object for easy removal by batch
         model.storeMarkerById(userId, marker);
       },
@@ -86,7 +115,7 @@ var myApp = {
       },
 
       clearMarkers: function() {
-        var markers = model.getMarkers;
+        var markers = model.getMarkers();
 
         for (var userId in markers) {
           if (markers.hasOwnProperty(userId)) {
@@ -105,37 +134,14 @@ var myApp = {
         this.setAnimation(google.maps.Animation.BOUNCE);
       }
 
-    })
+    });
   },
 
-  MarkersModel: function() {
-    var markers = {};
 
-    return {
-
-      getMarkers: function() { return markers },
-
-      getMarkersByUserId: function(userId) {
-        return (
-          markers[userId] ?
-          markers[userId] :
-          false
-        );
-      },
-
-      storeMarkerById: function(userId, marker) {
-        markers[userId] ?
-        markers[userId].push(marker) :
-        markers[userId] = [marker]
-      },
-
-      clearMarkerData: function() { markers = {}; }
-    }
-  },
 
   MarkersCtrl: function(model, view) {
 
-    return {
+    return ({
 
       toggleBounceByUserId: function(userId) {
         var markersWithId = model.getMarkersByUserId(userId);
@@ -146,17 +152,17 @@ var myApp = {
         }
       }
 
-    }
+    });
   },
 
 //////////////////////////////////////
 
-  AjaxCtrl: (function() {
+  AjaxCtrl: function(model, view, markersCTRL) {
 
     function locationResponseHandler(locations) {
       for (var property in locations) {
         if (locations.hasOwnProperty(property)) {
-          myApp.MarkersCtrl.setMarkers(locations[property]);
+          view.setMarkers(locations[property]);
         }
       }
     }
@@ -201,12 +207,15 @@ var myApp = {
       }
       // BIND EVENT HANDLERS HERE
       $('.result').click(function() {
-        if (myApp.MarkersCtrl.getMarkersByUserId(this.id))
-          myApp.MarkersCtrl.toggleBounceByUserId(this.id);
+        if (model.getMarkersByUserId(this.id))
+
+          // REMOVE THIS DEPENDENCY*********
+
+          markersCTRL.toggleBounceByUserId(this.id);
       });
 
       $('.result').on('mouseenter', function() {
-        if (!(myApp.MarkersCtrl.getMarkersByUserId(this.id)) &&
+        if (!(model.getMarkersByUserId(this.id)) &&
           this.id !== "no-trans-notification") {
           $('#results')
             .append(
@@ -259,7 +268,9 @@ var myApp = {
         var filter = myApp.filter,
             date = $('#date').html();
 
-        myApp.MarkersCtrl.clearMarkers();
+        view.clearMarkers();
+        model.clearMarkerData();
+
         if (filter !== "all") {
           getRequestFactory({date: date, filter: filter}, '/results');
         } else if (filter === "all") {
@@ -267,7 +278,7 @@ var myApp = {
         }
       }
     };
-  })()
+  }
 
 };
 
@@ -275,6 +286,11 @@ var myApp = {
 // CONFIG TO HAPPEN ON DOCUMENT READY:
 
 $(document).ready(function() {
+  var model = myApp.Model();
+  var view = myApp.View(model);
+  var ctrl = myApp.MarkersCtrl(model, view);
+  var ajaxCtrl = myApp.AjaxCtrl(model, view, ctrl);
+
   function initialize() {
     var mapOptions = {
 
@@ -288,8 +304,6 @@ $(document).ready(function() {
   }
   google.maps.event.addDomListener(window, 'load', initialize);
 
-
-
   // Event binding for reuse
   function bindEvents(element, action, callback) {
     $(element).on(action, callback);
@@ -297,7 +311,7 @@ $(document).ready(function() {
   // setFilter is for determining what to request in Ajax calls
   bindEvents('nav a', 'click', setFilter);
 
-  bindEvents($('#date').text, 'change', myApp.AjaxCtrl.request);
+  bindEvents($('#date').text, 'change', ajaxCtrl.request);
 
   bindEvents($('nav a'), 'click', function(event) {
     $('nav a').removeClass("active");
@@ -312,15 +326,16 @@ $(document).ready(function() {
     event.preventDefault();
     // From UX perspective,
     // makes sense to clear current markers when changing filter
-    myApp.MarkersCtrl.clearMarkers();
+    view.clearMarkers();
+    model.clearMarkerData();
 
     var filter = this.innerHTML.toLowerCase();
 
     myApp.filter = filter;
     if (filter === "all") {
-      myApp.AjaxCtrl.request();
+      ajaxCtrl.request();
     }
-  }
+  };
 
 });
 
