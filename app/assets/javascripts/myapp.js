@@ -139,25 +139,16 @@ var myApp = {
 
 
 
-  MarkersCtrl: function(model, view) {
+  Controller: function(model, view) {
 
-    return ({
-
-      toggleBounceByUserId: function(userId) {
-        var markersWithId = model.getMarkersByUserId(userId);
-        if (markersWithId) {
-          for (var i=0, len = markersWithId.length; i < len; i++) {
-            view.toggleBounce.call(markersWithId[i]);
-          }
+    function toggleBounceByUserId(userId) {
+      var markersWithId = model.getMarkersByUserId(userId);
+      if (markersWithId) {
+        for (var i=0, len = markersWithId.length; i < len; i++) {
+          view.toggleBounce.call(markersWithId[i]);
         }
       }
-
-    });
-  },
-
-//////////////////////////////////////
-
-  AjaxCtrl: function(model, view, markersCTRL) {
+    }
 
     function locationResponseHandler(locations) {
       for (var property in locations) {
@@ -208,10 +199,7 @@ var myApp = {
       // BIND EVENT HANDLERS HERE
       $('.result').click(function() {
         if (model.getMarkersByUserId(this.id))
-
-          // REMOVE THIS DEPENDENCY*********
-
-          markersCTRL.toggleBounceByUserId(this.id);
+          toggleBounceByUserId(this.id);
       });
 
       $('.result').on('mouseenter', function() {
@@ -263,9 +251,10 @@ var myApp = {
       }
     };
 
-    return {
+    return ({
+
       request: function() {
-        var filter = myApp.filter,
+        var filter = model.filter,
             date = $('#date').html();
 
         view.clearMarkers();
@@ -277,7 +266,7 @@ var myApp = {
           getRequestFactory({}, '/all');
         }
       }
-    };
+    });
   }
 
 };
@@ -288,8 +277,7 @@ var myApp = {
 $(document).ready(function() {
   var model = myApp.Model();
   var view = myApp.View(model);
-  var ctrl = myApp.MarkersCtrl(model, view);
-  var ajaxCtrl = myApp.AjaxCtrl(model, view, ctrl);
+  var ctrl = myApp.Controller(model, view);
 
   function initialize() {
     var mapOptions = {
@@ -311,7 +299,7 @@ $(document).ready(function() {
   // setFilter is for determining what to request in Ajax calls
   bindEvents('nav a', 'click', setFilter);
 
-  bindEvents($('#date').text, 'change', ajaxCtrl.request);
+  bindEvents($('#date').text, 'change', ctrl.request);
 
   bindEvents($('nav a'), 'click', function(event) {
     $('nav a').removeClass("active");
@@ -331,9 +319,9 @@ $(document).ready(function() {
 
     var filter = this.innerHTML.toLowerCase();
 
-    myApp.filter = filter;
+    model.filter = filter;
     if (filter === "all") {
-      ajaxCtrl.request();
+      ctrl.request();
     }
   };
 
