@@ -61,28 +61,27 @@
 var myApp = {
 
   Model: function() {
-    var markers = {};
-
+    var _markers = {};
 
     return ({
 
-      getMarkers: function() {return markers; },
+      getMarkers: function() {return _markers; },
 
       getMarkersByUserId: function(userId) {
         return (
-          markers[userId] ?
-          markers[userId] :
+          _markers[userId] ?
+          _markers[userId] :
           false
         );
       },
 
       storeMarkerById: function(userId, marker) {
-        markers[userId] ?
-        markers[userId].push(marker) :
-        markers[userId] = [marker]
+        _markers[userId] ?
+        _markers[userId].push(marker) :
+        _markers[userId] = [marker]
       },
 
-      clearMarkerData: function() { markers = {}; }
+      clearMarkerData: function() { _markers = {}; }
 
     });
 
@@ -141,7 +140,7 @@ var myApp = {
 
   Controller: function(model, view) {
 
-    function toggleBounceByUserId(userId) {
+    function _toggleBounceByUserId(userId) {
       var markersWithId = model.getMarkersByUserId(userId);
       if (markersWithId) {
         for (var i=0, len = markersWithId.length; i < len; i++) {
@@ -150,7 +149,7 @@ var myApp = {
       }
     }
 
-    function locationResponseHandler(locations) {
+    function _locationResponseHandler(locations) {
       for (var property in locations) {
         if (locations.hasOwnProperty(property)) {
           view.setMarkers(locations[property]);
@@ -158,7 +157,7 @@ var myApp = {
       }
     }
 
-    function transactionsResponseHandler(transactions) {
+    function _transactionsResponseHandler(transactions) {
       var html = "";
       function formatCurrency(transactions) {
         return (transactions.map(
@@ -176,7 +175,7 @@ var myApp = {
               userInfoArray = JSON.parse(userInfo),
               userId = userInfoArray[0],
               userName = userInfoArray[1],
-              opacityClass = getOpacityClass(usersTransactions);
+              opacityClass = _getOpacityClass(usersTransactions);
 
           html += (
             "<div id=" + userId + " class='result " + opacityClass + "'>" +
@@ -199,7 +198,7 @@ var myApp = {
       // BIND EVENT HANDLERS HERE
       $('.result').click(function() {
         if (model.getMarkersByUserId(this.id))
-          toggleBounceByUserId(this.id);
+          _toggleBounceByUserId(this.id);
       });
 
       $('.result').on('mouseenter', function() {
@@ -219,21 +218,21 @@ var myApp = {
       });
     }
 
-    var responseHandler = function(response) {
-      locationResponseHandler(response.locations);
-      transactionsResponseHandler(response.transactions);
+    var _responseHandler = function(response) {
+      _locationResponseHandler(response.locations);
+      _transactionsResponseHandler(response.transactions);
     };
 
-    var getRequestFactory = function(data, url) {
+    var _getRequestFactory = function(data, url) {
       $.ajax({
         type: 'GET',
         url: url,
         data: data
-      }).success(responseHandler);
+      }).success(_responseHandler);
     };
 
     // the results returned at any time aren't huge, so this is okay
-    var getOpacityClass = function(group) {
+    var _getOpacityClass = function(group) {
       var total = 0;
       for (var i=0, len = group.length; i<len; i++) {
         total += parseFloat(group[i].amount);
@@ -261,9 +260,9 @@ var myApp = {
         model.clearMarkerData();
 
         if (filter !== "all") {
-          getRequestFactory({date: date, filter: filter}, '/results');
+          _getRequestFactory({date: date, filter: filter}, '/results');
         } else if (filter === "all") {
-          getRequestFactory({}, '/all');
+          _getRequestFactory({}, '/all');
         }
       }
     });
@@ -275,9 +274,9 @@ var myApp = {
 // CONFIG TO HAPPEN ON DOCUMENT READY:
 
 $(document).ready(function() {
-  var model = myApp.Model();
-  var view = myApp.View(model);
-  var ctrl = myApp.Controller(model, view);
+  var model = myApp.Model(),
+      view = myApp.View(model),
+      ctrl = myApp.Controller(model, view);
 
   function initialize() {
     var mapOptions = {
