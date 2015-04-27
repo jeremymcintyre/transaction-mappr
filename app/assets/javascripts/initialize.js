@@ -8,9 +8,6 @@
 *
 *   * Binds event handlers to the filters and date
 *
-*   * Defines the setFilter() function, which event handlers use to set the
-*       transaction type filter.
-*
 *   * Uses the event handlers to set the initial filter to 'charge', so the
 *       user does not have to select one in order to begin using the app.
 *
