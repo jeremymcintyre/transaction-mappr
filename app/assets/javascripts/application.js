@@ -13,5 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require myapp
+//= require initialize
 //= require components/react-slider
 //= require_tree .

@@ -1,60 +1,6 @@
-/**
-*
-* This file contains 2 main parts:
-* 1. myApp object with functions & behaviors organized into controllers
-* 2. Initial configuration to happen on document ready
-*
-* These sections are further explained below.
-*
-* -----------------------------------------------------------------------
-* ONE.
-*
-* The myApp object has 2 main controllers:
-*
-*   * MarkersCtrl
-*     • Controls the creation, setting, getting, clearing,
-*        event binding, and animations of google maps markers
-*
-*   * AjaxCtrl
-*     • Handles all requests to the backend API and all responses,
-*        including transforming the responses into formatted DOM elements
-*     • There is only one returned method, request()
-*
-*
-*
-*  Both controllers are properties of the myApp object, and expressed as
-*  Immediately-Invoking Function Expressions (IIFEs). This allows "private"
-*  functions to be declared inside of them that are not returned, and so are
-*  inaccessible from outside. For example, myApp.AjaxCtrl.request() is the
-*  only returned function from AjaxCtrl that can be accessed elsewhere. This
-*  encapsulates and shields behavior specific to the controller that is not
-*  necessary to share.
-*
-*
-*  ****** NOTE: Behavior for the slider component is located in:
-*        app/assets/javascripts/components/react-slider.js
-*
-*
-*
-* -----------------------------------------------------------------------
-* TWO.
-*
-* Initial configuration takes care of the following on document ready:
-*
-*   * Initializes the map with proper coordinates and zoom.
-*
-*   * Stores a reference to the map in the myApp object.
-*
-*   * Binds event handlers to the nav and date container.
-*
-*   * Defines the setFilter() function, which event handlers use to set the
-*       transaction type filter.
-*
-*   * Uses the event handlers to set the initial filter to 'charge', so the
-*       user does not have to select one in order to begin using the app.
-*
-*
-* -----------------------------------------------------------------------
+/*
+*   Behavior for the slider component is located in:
+*     app/assets/javascripts/components/react-slider.js
 */
 
 
@@ -250,20 +196,36 @@ var myApp = {
       }
     };
 
+    var _makeRequest = function() {
+      var filter = model.filter,
+          date = $('#date').html();
+
+      view.clearMarkers();
+      model.clearMarkerData();
+
+      if (filter !== "all") {
+        _getRequestFactory({date: date, filter: filter}, '/results');
+      } else if (filter === "all") {
+        _getRequestFactory({}, '/all');
+      }
+    };
+
     return ({
+      request: _makeRequest,
 
-      request: function() {
-        var filter = model.filter,
-            date = $('#date').html();
+      setFilter: function(event) {
+        event.preventDefault();
 
+        // From UX perspective,
+        // makes sense to clear current markers when changing filter
         view.clearMarkers();
         model.clearMarkerData();
 
-        if (filter !== "all") {
-          _getRequestFactory({date: date, filter: filter}, '/results');
-        } else if (filter === "all") {
-          _getRequestFactory({}, '/all');
-        }
+        var filter = this.innerHTML.toLowerCase();
+
+        model.filter = filter;
+        if (filter === "all")
+          _makeRequest();
       }
     });
   }
@@ -271,59 +233,5 @@ var myApp = {
 };
 
 
-// CONFIG TO HAPPEN ON DOCUMENT READY:
-
-$(document).ready(function() {
-  var model = myApp.Model(),
-      view = myApp.View(model),
-      ctrl = myApp.Controller(model, view);
-
-  function initialize() {
-    var mapOptions = {
-
-      center: new google.maps.LatLng(35.896838, -117.948875),
-      zoom: 5
-    };
-    // capture 'map' in scope for use in making markers
-    myApp.map = new google.maps.Map(document.getElementById('map-canvas'),
-      mapOptions);
-
-  }
-  google.maps.event.addDomListener(window, 'load', initialize);
-
-  // Event binding for reuse
-  function bindEvents(element, action, callback) {
-    $(element).on(action, callback);
-  }
-  // setFilter is for determining what to request in Ajax calls
-  bindEvents('nav a', 'click', setFilter);
-
-  bindEvents($('#date').text, 'change', ctrl.request);
-
-  bindEvents($('nav a'), 'click', function(event) {
-    $('nav a').removeClass("active");
-    $(event.target).addClass("active");
-  });
-
-  // set initial filter to "charge" using bound handlers
-  $('nav a:contains("CHARGE")').trigger('click');
-
-
-  function setFilter(event) {
-    event.preventDefault();
-    // From UX perspective,
-    // makes sense to clear current markers when changing filter
-    view.clearMarkers();
-    model.clearMarkerData();
-
-    var filter = this.innerHTML.toLowerCase();
-
-    model.filter = filter;
-    if (filter === "all") {
-      ctrl.request();
-    }
-  };
-
-});
 
 
