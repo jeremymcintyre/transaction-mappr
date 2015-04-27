@@ -46,6 +46,15 @@ var myApp = {
       model.storeMarkerById(userId, marker);
     }
 
+    function _informNoTransactionData() {
+      $('#results')
+        .append(
+          '<div id="no-trans-notification" class="result">' +
+            'There is no transaction data of the selected type for this date' +
+          '</div>'
+        );
+    }
+
     return ({
 
       setMarkers: function(locations) {
@@ -76,14 +85,6 @@ var myApp = {
         this.setAnimation(google.maps.Animation.BOUNCE);
       },
 
-      informNoTransactionData: function() {
-        $('#results')
-          .append(
-            '<div id="no-trans-notification" class="result">' +
-              'There is no transaction data of the selected type for this date' +
-            '</div>'
-          );
-      },
 
       informNoLocationData: function() {
         $('#results')
@@ -111,6 +112,15 @@ var myApp = {
             userName + " - " + amounts.join(", ") +
           "</div>"
         );
+      },
+
+      displayList: function(html) {
+        if (html.length === 0) {
+          _informNoTransactionData();
+        } else {
+          $('#no-trans-notification').remove();
+          $('#results').append(html);
+        }
       }
 
     });
@@ -136,6 +146,23 @@ var myApp = {
       }
     }
 
+    function _bindListItemEventHandlers() {
+      $('.result').click(function() {
+        if (model.getMarkersByUserId(this.id))
+          _toggleBounceByUserId(this.id);
+      });
+
+      $('.result').on('mouseenter', function() {
+        if (!(model.getMarkersByUserId(this.id)) &&
+          (this.id !== "no-trans-notification"))
+          view.informNoLocationData();
+      });
+
+      $('.result').on('mouseleave', function() {
+        $('#no-loc-notification').remove();
+      });
+    }
+
     function _transactionsResponseHandler(transactions) {
       var html = "";
 
@@ -158,27 +185,9 @@ var myApp = {
         }
       }
 
-      if (html.length === 0) {
-        view.informNoTransactionData();
-      } else {
-        $('#no-trans-notification').remove();
-        $('#results').append(html);
-      }
-      // BIND EVENT HANDLERS HERE
-      $('.result').click(function() {
-        if (model.getMarkersByUserId(this.id))
-          _toggleBounceByUserId(this.id);
-      });
+      view.displayList(html);
+      _bindListItemEventHandlers();
 
-      $('.result').on('mouseenter', function() {
-        if (!(model.getMarkersByUserId(this.id)) &&
-          (this.id !== "no-trans-notification"))
-          view.informNoLocationData();
-      });
-
-      $('.result').on('mouseleave', function() {
-        $('#no-loc-notification').remove();
-      });
     }
 
     var _responseHandler = function(response) {
