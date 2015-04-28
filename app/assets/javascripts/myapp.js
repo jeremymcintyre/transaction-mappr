@@ -30,8 +30,9 @@ var myApp = {
       clearMarkerData: function() { _markers = {}; }
 
     });
-
   },
+
+
 
   View: function(model) {
 
@@ -168,7 +169,6 @@ var myApp = {
 
   Controller: function(model, view) {
 
-
     function _locationResponseHandler(locations) {
       for (var property in locations) {
         if (locations.hasOwnProperty(property)) {
@@ -176,7 +176,6 @@ var myApp = {
         }
       }
     }
-
 
     function _transactionsResponseHandler(transactions) {
       var html = "";
@@ -199,18 +198,16 @@ var myApp = {
             amounts);
         }
       }
-
       view.displayList(html);
       view.bindListItemEventHandlers();
-
     }
 
-    var _responseHandler = function(response) {
+    function _responseHandler(response) {
       _locationResponseHandler(response.locations);
       _transactionsResponseHandler(response.transactions);
     };
 
-    var _getRequestFactory = function(data, url) {
+    function _getRequestFactory(data, url) {
       $.ajax({
         type: 'GET',
         url: url,
@@ -219,7 +216,7 @@ var myApp = {
     };
 
     // the results returned at any time aren't huge, so this is okay
-    var _getOpacityClass = function(group) {
+    function _getOpacityClass(group) {
       var total = 0;
       for (var i=0, len = group.length; i<len; i++) {
         total += parseFloat(group[i].amount);
@@ -227,7 +224,7 @@ var myApp = {
       return view.colorOpacity(total);
     };
 
-    var _makeRequest = function() {
+    function _makeRequest() {
       var filter = model.filter,
           date = $('#date').html();
 
@@ -242,12 +239,13 @@ var myApp = {
     };
 
     return ({
+
       request: _makeRequest,
 
       setFilter: function(event) {
         event.preventDefault();
         // From UX perspective,
-        // makes sense to clear current markers when changing filter
+        // makes sense to clear markers when changing filter
         view.clearMarkers();
         model.clearMarkerData();
 
@@ -257,9 +255,9 @@ var myApp = {
         if (filter === "all")
           _makeRequest();
       }
+
     });
   }
-
 };
 
 
