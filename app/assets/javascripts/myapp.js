@@ -55,6 +55,30 @@ var myApp = {
         );
     }
 
+    function _informNoLocationData() {
+      $('#results')
+          .append(
+            '<div id="no-loc-notification" class="result">' +
+              'There is no location data for this person on this date' +
+            '</div>'
+        );
+    }
+
+    function _toggleBounce() {
+      this.getAnimation() !== null ?
+      this.setAnimation(null) :
+      this.setAnimation(google.maps.Animation.BOUNCE);
+    }
+
+    function _toggleBounceByUserId(userId) {
+      var markersWithId = model.getMarkersByUserId(userId);
+      if (markersWithId) {
+        for (var i=0, len = markersWithId.length; i < len; i++) {
+          _toggleBounce.call(markersWithId[i]);
+        }
+      }
+    }
+
     return ({
 
       setMarkers: function(locations) {
@@ -77,22 +101,6 @@ var myApp = {
             }
           }
         }
-      },
-
-      toggleBounce: function() {
-        this.getAnimation() !== null ?
-        this.setAnimation(null) :
-        this.setAnimation(google.maps.Animation.BOUNCE);
-      },
-
-
-      informNoLocationData: function() {
-        $('#results')
-            .append(
-              '<div id="no-loc-notification" class="result">' +
-                'There is no location data for this person on this date' +
-              '</div>'
-            );
       },
 
       formatCurrency: function(transactions) {
@@ -121,6 +129,37 @@ var myApp = {
           $('#no-trans-notification').remove();
           $('#results').append(html);
         }
+      },
+
+      bindListItemEventHandlers: function() {
+        $('.result').click(function() {
+          if (model.getMarkersByUserId(this.id))
+            _toggleBounceByUserId(this.id);
+        });
+
+        $('.result').on('mouseenter', function() {
+          if (!(model.getMarkersByUserId(this.id)) &&
+            (this.id !== "no-trans-notification"))
+            _informNoLocationData();
+        });
+
+        $('.result').on('mouseleave', function() {
+          $('#no-loc-notification').remove();
+        });
+      },
+
+      colorOpacity: function(total) {
+        if (total < 50) {
+          return "light";
+        } else if (total < 100) {
+          return "medium-light";
+        } else if (total < 150) {
+          return "medium";
+        } else if (total < 150) {
+          return "medium-dark";
+        } else if (total >= 150) {
+          return "dark";
+        }
       }
 
     });
@@ -129,14 +168,6 @@ var myApp = {
 
   Controller: function(model, view) {
 
-    function _toggleBounceByUserId(userId) {
-      var markersWithId = model.getMarkersByUserId(userId);
-      if (markersWithId) {
-        for (var i=0, len = markersWithId.length; i < len; i++) {
-          view.toggleBounce.call(markersWithId[i]);
-        }
-      }
-    }
 
     function _locationResponseHandler(locations) {
       for (var property in locations) {
@@ -146,22 +177,6 @@ var myApp = {
       }
     }
 
-    function _bindListItemEventHandlers() {
-      $('.result').click(function() {
-        if (model.getMarkersByUserId(this.id))
-          _toggleBounceByUserId(this.id);
-      });
-
-      $('.result').on('mouseenter', function() {
-        if (!(model.getMarkersByUserId(this.id)) &&
-          (this.id !== "no-trans-notification"))
-          view.informNoLocationData();
-      });
-
-      $('.result').on('mouseleave', function() {
-        $('#no-loc-notification').remove();
-      });
-    }
 
     function _transactionsResponseHandler(transactions) {
       var html = "";
@@ -186,7 +201,7 @@ var myApp = {
       }
 
       view.displayList(html);
-      _bindListItemEventHandlers();
+      view.bindListItemEventHandlers();
 
     }
 
@@ -209,17 +224,7 @@ var myApp = {
       for (var i=0, len = group.length; i<len; i++) {
         total += parseFloat(group[i].amount);
       }
-      if (total < 50) {
-        return "light";
-      } else if (total < 100) {
-        return "medium-light";
-      } else if (total < 150) {
-        return "medium";
-      } else if (total < 150) {
-        return "medium-dark";
-      } else if (total >= 150) {
-        return "dark";
-      }
+      return view.colorOpacity(total);
     };
 
     var _makeRequest = function() {
