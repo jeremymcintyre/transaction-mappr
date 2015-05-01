@@ -5,15 +5,8 @@
   <h2><span>Use the slider to adjust the date. Click on transaction list items to show where the user was on that day! Click again to stop animation.</span></h2>
   </div>
   <div id="header-controls">
-    <nav>
-      <p>FILTER TRANSACTIONS BY TYPE</p>
-      <ul>
-        <li><a href="/">CHARGE</a></li>
-        <li><a href="/">EARNING</a></li>
-        <li><a href="/">BOTH</a></li>
-        <li><a href="/">ALL</a></li>
-      </ul>
-    </nav>
+    <%= react_component('NavFilters', {filters: ['CHARGE', 'EARNING', 'BOTH', 'ALL']},
+      {prerender: true}) %>
     <%= react_component('SliderControl', {prerender: true}) %>
   </div>
 </header>

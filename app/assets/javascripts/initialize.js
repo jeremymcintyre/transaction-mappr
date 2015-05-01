@@ -37,7 +37,7 @@ $(document).ready(function() {
 
   // Event Listener binding
 
-  var filterText = $('nav a'),
+  var filterText = $('nav li'),
       dateText = $('#date').text;
 
   filterText.on('click', ctrl.setFilter);
@@ -51,6 +51,6 @@ $(document).ready(function() {
 
 
   // set initial filter to "charge" using bound handlers
-  $('nav a:contains("CHARGE")').trigger('click');
+  $('nav li:contains("CHARGE")').trigger('click');
 
 });

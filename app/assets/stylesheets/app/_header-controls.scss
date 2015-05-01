@@ -27,11 +27,13 @@ nav {
 
 ul {
   list-style: none;
+  text-align: center;
 }
 
 li {
   display: inline-block;
-  margin: 0 5%;
+  padding: 0 4%;
+  cursor: pointer;
 }
 
 .active {
