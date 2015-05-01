@@ -239,9 +239,9 @@ var myApp = {
       request: _makeRequest,
 
       setFilter: function(event) {
-        event.preventDefault();
         // From UX perspective,
         // makes sense to clear markers when changing filter
+        view.clearList();
         view.clearMarkers();
         model.clearMarkerData();
 
