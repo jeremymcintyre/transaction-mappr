@@ -48,21 +48,17 @@ var myApp = {
     }
 
     function _informNoTransactionData() {
-      $('#results')
-        .append(
-          '<div id="no-trans-notification" class="result">' +
-            'There is no transaction data of the selected type for this date' +
-          '</div>'
-        );
+      $('<div id="no-trans-notification" class="result" style="opacity:0;">' +
+          'There is no transaction data of the selected type for this date' +
+        '</div>')
+      .appendTo('#results').fadeTo(600, 1);
     }
 
     function _informNoLocationData() {
-      $('#results')
-          .append(
-            '<div id="no-loc-notification" class="result">' +
-              'There is no location data for this person on this date' +
-            '</div>'
-        );
+      $('<div id="no-loc-notification" class="result" style="opacity:0;">' +
+            'There is no location data for this person on this date' +
+          '</div>')
+      .appendTo('#results').fadeTo(600, 1);
     }
 
     function _toggleBounce() {

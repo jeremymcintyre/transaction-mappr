@@ -43,3 +43,4 @@ group :development, :test do
 end
 
 gem 'react-rails'
+gem 'bullet', group: :development
