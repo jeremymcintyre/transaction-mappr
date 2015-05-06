@@ -36,7 +36,7 @@ var SliderControl = React.createClass({
     return (
       <div>
         <Slider ref="slider" update={this.update} />
-        <label id="label">{this.state.slider}</label>
+        <label>Day {this.state.slider} of 60</label>
       </div>
     );
   }
