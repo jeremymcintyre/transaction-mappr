@@ -136,8 +136,10 @@ var myApp = {
 
         $('.result').on('mouseenter', function() {
           if (!(model.getMarkersByUserId(this.id)) &&
-            (this.id !== "no-trans-notification"))
-            _informNoLocationData();
+             (this.id !== "no-trans-notification")) {
+              _informNoLocationData();
+          }
+          else { $(this).css("cursor", "pointer"); }
         });
 
         $('.result').on('mouseleave', function() {
