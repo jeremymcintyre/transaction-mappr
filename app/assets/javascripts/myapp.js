@@ -176,7 +176,7 @@ var myApp = {
     }
 
     function _transactionsResponseHandler(transactions) {
-      var html = "";
+      var html = [];
 
       view.clearList();
 
@@ -189,14 +189,15 @@ var myApp = {
               userName = userInfoArray[1],
               opacityClass = _getOpacityClass(usersTransactions);
 
-          html += view.newTransactionListItem(
+          html.push(view.newTransactionListItem(
             userId,
             opacityClass,
             userName,
-            amounts);
+            amounts)
+          );
         }
       }
-      view.displayList(html);
+      view.displayList(html.join(""));
       view.bindListItemEventHandlers();
     }
 
